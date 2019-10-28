@@ -22,6 +22,7 @@
         android:focusableInTouchMode="true"
         android:marqueeRepeatLimit="marquee_forever"/>-->
     <com.samlu.mobilesafe.view.FocusTextView
+        android:id="@+id/tv_marquee"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="sdadasdasdasdasdassaddahgfhfghfghfghfsfesfgs"
@@ -31,4 +32,14 @@
         android:ellipsize="marquee"
         android:marqueeRepeatLimit="marquee_forever">
     </com.samlu.mobilesafe.view.FocusTextView>
+
+    <!--android:numColumns指定列数-->
+    <!--android:verticalSpacing指定内部条目竖直方向的间距-->
+    <GridView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/gv_home"
+        android:numColumns="3"
+        android:verticalSpacing="10dp">
+    </GridView>
 </LinearLayout>

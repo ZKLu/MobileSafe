@@ -27,4 +27,6 @@ public class FocusTextView extends TextView {
     public boolean isFocused() {
         return true;
     }
+
 }
+
