@@ -1,11 +1,13 @@
 package com.samlu.mobilesafe.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -49,6 +51,20 @@ public class HomeActivity extends Activity{
                 R.drawable.home_settings};
         //九宫格控件设置数据适配器
         gv_home.setAdapter(new MyAdapter());
+        //注册九宫格单个条目的点击事件
+        gv_home.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position){
+                    case 0:
+                        break;
+                    case 8:
+                        Intent intent = new Intent(getApplicationContext(),SettingActivity.class);
+                        startActivity(intent);
+                        break;
+                }
+            }
+        });
     }
 
 
