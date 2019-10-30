@@ -24,6 +24,8 @@ import org.xutils.common.Callback;
 import org.xutils.http.*;
 
 import com.samlu.mobilesafe.R;
+import com.samlu.mobilesafe.utils.ConstantValue;
+import com.samlu.mobilesafe.utils.SpUtil;
 import com.samlu.mobilesafe.utils.StreamUtil;
 import com.samlu.mobilesafe.utils.ToastUtil;
 
@@ -283,7 +285,13 @@ public class SplashActivity extends AppCompatActivity {
         *   downloadUrl:"http://www.sdasd.com/sss.apk"
         * }
         * */
+        if (SpUtil.getBoolean(this, ConstantValue.OPEN_UPDATE,false)){
         checkVersion();
+        }else {
+            //直接进入主界面
+            //发送消息4s后去处理ENTER_HOME状态码指向的处理
+            mHandler.sendEmptyMessageDelayed(ENTER_HOME,4000);
+        }
     }
 
     /**

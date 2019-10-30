@@ -27,7 +27,7 @@
         android:layout_height="wrap_content"
         android:text="sdadasdasdasdasdassaddahgfhfghfghfghfsfesfgs"
         android:textColor="#000"
-        android:maxLines="1"
+        android:singleLine="true"
         android:padding="5dp"
         android:ellipsize="marquee"
         android:marqueeRepeatLimit="marquee_forever">
