@@ -24,6 +24,7 @@ public class SettingItemView extends RelativeLayout {
     private String mDeson;
     private String mDesoff;
     private String mDestitle;
+    private static final String NAMESPACE = "http://schemas.android.com/apk/res-auto";
 
     public SettingItemView(Context context) {
         this(context,null);
@@ -59,12 +60,11 @@ public class SettingItemView extends RelativeLayout {
     */
     private void initAttrs(AttributeSet attrs) {
         //通过名空间+属性值名称获取属性值
-        mDeson = attrs.getAttributeValue(ConstantValue.NAMESPACE,"deson");
-        mDesoff = attrs.getAttributeValue(ConstantValue.NAMESPACE,"desoff");
-        mDestitle = attrs.getAttributeValue(ConstantValue.NAMESPACE,"destitle");
+        mDeson = attrs.getAttributeValue(NAMESPACE,"deson");
+        mDesoff = attrs.getAttributeValue(NAMESPACE,"desoff");
+        mDestitle = attrs.getAttributeValue(NAMESPACE,"destitle");
 
-
-    }
+        }
 
     /**
      * 判断是否开启的方法

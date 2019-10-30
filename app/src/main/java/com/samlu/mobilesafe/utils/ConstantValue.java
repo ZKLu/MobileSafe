@@ -7,7 +7,7 @@ public class ConstantValue {
     /*
     * 自定义控件属性的命名空间
     * */
-    public static final String NAMESPACE = "http://schemas.android.com/apk/res/com.samlu.mobilesafe";
+    public static final String NAMESPACE = "http://schemas.android.com/apk/res-auto";
 
 /*
 * 是否开启更新的key

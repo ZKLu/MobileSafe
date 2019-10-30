@@ -19,7 +19,6 @@ public class SettingActivity extends Activity{
         setContentView(R.layout.activity_setting);
 
         initUpdate();
-
     }
 
     private void initUpdate() {
