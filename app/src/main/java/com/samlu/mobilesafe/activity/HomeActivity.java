@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.samlu.mobilesafe.R;
 import com.samlu.mobilesafe.utils.ConstantValue;
+import com.samlu.mobilesafe.utils.Md5Util;
 import com.samlu.mobilesafe.utils.SpUtil;
 import com.samlu.mobilesafe.utils.ToastUtil;
 
@@ -83,8 +84,6 @@ public class HomeActivity extends Activity{
             //2、确认密码对话框
             showConfirmDialog();
         }
-        
-        
     }
 /**
  * 确认密码对话框
@@ -92,6 +91,49 @@ public class HomeActivity extends Activity{
 *@return
 */
     private void showConfirmDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog dialog = builder.create();
+        //自定义对话框界面
+        final View view = View.inflate(this,R.layout.dialog_confirm_pwd,null);
+        dialog.setView(view);
+        dialog.show();
+
+        Button bt_submit = view.findViewById(R.id.bt_submit);
+        Button bt_cancel = view.findViewById(R.id.bt_cancel);
+
+        bt_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                EditText et_confirm_pwd = view.findViewById(R.id.et_confirm_pwd);
+                String confirmPwd = et_confirm_pwd.getText().toString();
+
+                if ( !confirmPwd.isEmpty()){
+                    String MD5_pwd = Md5Util.encoder(confirmPwd);
+                    String pwd = SpUtil.getString(getApplicationContext(),ConstantValue.MOBILE_SAFE_PWD,"");
+                    if (MD5_pwd.equals(pwd)){
+                        //进入手机防盗模块
+                        Intent intent = new Intent(getApplicationContext(),TestActivity.class);
+                        startActivity(intent);
+                        //跳转到新Activity后，dialog会隐藏
+                        dialog.dismiss();
+                    }
+                    else{
+                        ToastUtil.show(getApplicationContext(),"密码不匹配");
+                    }
+                }
+                else{
+                    ToastUtil.show(getApplicationContext(),"密码不能为空");
+                }
+            }
+        });
+
+        bt_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
     }
 
     /**
@@ -126,6 +168,9 @@ public class HomeActivity extends Activity{
                         startActivity(intent);
                         //跳转到新Activity后，dialog会隐藏
                         dialog.dismiss();
+
+                        SpUtil.putString(getApplicationContext(),ConstantValue.MOBILE_SAFE_PWD,
+                                Md5Util.encoder(pwd));
                     }
                     else{
                         ToastUtil.show(getApplicationContext(),"密码不匹配");
