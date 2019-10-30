@@ -95,7 +95,7 @@ public class HomeActivity extends Activity{
         final AlertDialog dialog = builder.create();
         //自定义对话框界面
         final View view = View.inflate(this,R.layout.dialog_confirm_pwd,null);
-        dialog.setView(view);
+        dialog.setView(view,0,0,0,0);//其余5个参数是内边距
         dialog.show();
 
         Button bt_submit = view.findViewById(R.id.bt_submit);
@@ -113,7 +113,7 @@ public class HomeActivity extends Activity{
                     String pwd = SpUtil.getString(getApplicationContext(),ConstantValue.MOBILE_SAFE_PWD,"");
                     if (MD5_pwd.equals(pwd)){
                         //进入手机防盗模块
-                        Intent intent = new Intent(getApplicationContext(),TestActivity.class);
+                        Intent intent = new Intent(getApplicationContext(),SetupOverActivity.class);
                         startActivity(intent);
                         //跳转到新Activity后，dialog会隐藏
                         dialog.dismiss();
@@ -146,7 +146,7 @@ public class HomeActivity extends Activity{
         final AlertDialog dialog = builder.create();
         //自定义对话框界面
         final View view = View.inflate(this,R.layout.dialog_set_pwd,null);
-        dialog.setView(view);
+        dialog.setView(view,0,0,0,0); //其余5个参数是内边距
         dialog.show();
 
         Button bt_submit = view.findViewById(R.id.bt_submit);
@@ -164,7 +164,7 @@ public class HomeActivity extends Activity{
                 if (!pwd.isEmpty() && !confirmPwd.isEmpty()){
                     if (pwd.equals(confirmPwd)){
                         //进入手机防盗模块
-                        Intent intent = new Intent(getApplicationContext(),TestActivity.class);
+                        Intent intent = new Intent(getApplicationContext(),SetupOverActivity.class);
                         startActivity(intent);
                         //跳转到新Activity后，dialog会隐藏
                         dialog.dismiss();
