@@ -37,6 +37,7 @@ public class SettingActivity extends Activity{
                 SpUtil.putBoolean(getApplicationContext(),ConstantValue.OPEN_UPDATE,!ischeck);
             }
         });
+
     }
 
 

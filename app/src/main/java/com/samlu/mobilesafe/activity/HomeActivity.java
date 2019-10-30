@@ -1,21 +1,25 @@
 package com.samlu.mobilesafe.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.samlu.mobilesafe.R;
+import com.samlu.mobilesafe.utils.ConstantValue;
+import com.samlu.mobilesafe.utils.SpUtil;
+import com.samlu.mobilesafe.utils.ToastUtil;
 
 /**
  * Created by sam lu on 2019/10/24.
@@ -57,12 +61,87 @@ public class HomeActivity extends Activity{
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position){
                     case 0:
+                        //开启对话框
+                        showDialog();
                         break;
                     case 8:
                         Intent intent = new Intent(getApplicationContext(),SettingActivity.class);
                         startActivity(intent);
                         break;
                 }
+            }
+        });
+    }
+
+    private void showDialog() {
+        //判断本地是否有密码
+        String pwd = SpUtil.getString(this, ConstantValue.MOBILE_SAFE_PWD,"");
+        if (TextUtils.isEmpty(pwd)){
+            //1、初始设置密码对话框
+            showPwdDialog();
+        }else {
+            //2、确认密码对话框
+            showConfirmDialog();
+        }
+        
+        
+    }
+/**
+ * 确认密码对话框
+*@param
+*@return
+*/
+    private void showConfirmDialog() {
+    }
+
+    /**
+ * 自定义设置密码对话框
+*@param
+*@return
+*/
+    private void showPwdDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        final AlertDialog dialog = builder.create();
+        //自定义对话框界面
+        final View view = View.inflate(this,R.layout.dialog_set_pwd,null);
+        dialog.setView(view);
+        dialog.show();
+
+        Button bt_submit = view.findViewById(R.id.bt_submit);
+        Button bt_cancel = view.findViewById(R.id.bt_cancel);
+
+        bt_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EditText et_set_pwd = view.findViewById(R.id.et_set_pwd);
+                EditText et_confirm_pwd = view.findViewById(R.id.et_confirm_pwd);
+
+                String pwd = et_set_pwd.getText().toString();
+                String confirmPwd = et_confirm_pwd.getText().toString();
+
+                if (!pwd.isEmpty() && !confirmPwd.isEmpty()){
+                    if (pwd.equals(confirmPwd)){
+                        //进入手机防盗模块
+                        Intent intent = new Intent(getApplicationContext(),TestActivity.class);
+                        startActivity(intent);
+                        //跳转到新Activity后，dialog会隐藏
+                        dialog.dismiss();
+                    }
+                    else{
+                        ToastUtil.show(getApplicationContext(),"密码不匹配");
+                    }
+
+                }
+                else{
+                    ToastUtil.show(getApplicationContext(),"密码不能为空");
+                }
+            }
+        });
+
+        bt_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
             }
         });
     }
