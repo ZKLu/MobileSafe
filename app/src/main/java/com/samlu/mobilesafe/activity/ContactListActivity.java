@@ -64,7 +64,6 @@ public class ContactListActivity extends Activity{
                         new String[]{"contact_id"},null,null,null);
                 //ListView作为成员变量，为避免里面有数据,出现数据重复的问题，在使用之前清空以下
                 contactList.clear();
-                Log.i("ContactListActivity","总数是 "+cursor.getColumnCount());
                 while (cursor.moveToNext()){
                     String id = cursor.getString(0);
                     //根据用户唯一性id，查询data表和mimetype表生成的视图，获取data以及mimetype字段
