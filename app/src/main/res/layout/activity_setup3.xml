@@ -4,23 +4,25 @@
     android:layout_height="match_parent">
     <TextView
         style="@style/TitleStyle"
-        android:text="2、手机卡绑定"/>
+        android:text="2、设置安全号码"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="通过绑定SIM卡：\n下次重启手机如果发现SIM卡变化，就会发生报警短信"
+        android:text="SIM卡变更后\n 就会发送报警短信至安全号码"
         android:textSize="18sp"
         android:textColor="#000"
         android:layout_margin="5dp"/>
-    <com.samlu.mobilesafe.view.SettingItemView
-        xmlns:mobilesafe="http://schemas.android.com/apk/res-auto"
+    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/siv_sim_bound"
-        mobilesafe:destitle="点击绑定SIM卡"
-        mobilesafe:desoff="sim卡未绑定"
-        mobilesafe:deson="sim卡已绑定">
-    </com.samlu.mobilesafe.view.SettingItemView>
+        android:id="@+id/et_phone_number"
+        android:hint="请输入电话号码"/>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/bt_select_number"
+        android:text="选择联系人"
+        android:background="@drawable/selector_number_btn_bg"/>
     <LinearLayout
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
