@@ -70,4 +70,16 @@ public class SpUtil {
         }
         return sharedPreferences.getString(key,defValue);
     }
+    
+    /**
+     * 从sharepreference中移除节点
+    *@param context 上下文环境
+    *@param key 需要移除的节点
+    */
+    public static void remove(Context context, String key) {
+        if (sharedPreferences ==null) {
+            sharedPreferences = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+        }
+        sharedPreferences.edit().remove(key).commit();
+    }
 }

@@ -2,27 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <TextView
         style="@style/TitleStyle"
-        android:text="2、设置安全号码"/>
-    <TextView
+        android:text="4、恭喜您，设置完成"/>
+    <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SIM卡变更后\n 就会发送报警短信至安全号码"
-        android:textSize="18sp"
-        android:textColor="#000"
-        android:layout_margin="5dp"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/et_phone_number"
-        android:hint="请输入电话号码"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/bt_select_number"
-        android:text="选择联系人"
-        android:background="@drawable/selector_number_btn_bg"/>
+        android:id="@+id/cb_box"
+        android:text="您没有开启防盗保护"/>
     <LinearLayout
         android:gravity="center_horizontal"
         android:layout_width="match_parent"
@@ -39,19 +27,20 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:drawable/presence_online"/>
+            android:background="@android:drawable/presence_invisible"/>
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:drawable/presence_invisible"/>
+            android:background="@android:drawable/presence_online"/>
     </LinearLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bind"
+            android:background="@drawable/phone"
             android:layout_centerInParent="true"/>
         <!--图片选择器，在选择和未选中的过程中，切换展示图片-->
         <Button
@@ -59,6 +48,5 @@
         <Button
             style="@style/preBtn"/>
     </RelativeLayout>
-
 
 </LinearLayout>
