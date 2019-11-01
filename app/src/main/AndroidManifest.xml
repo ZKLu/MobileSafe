@@ -21,6 +21,7 @@
         <activity android:name="com.samlu.mobilesafe.activity.SettingActivity"/>
         <activity android:name="com.samlu.mobilesafe.activity.SetupOverActivity"/>
         <activity android:name="com.samlu.mobilesafe.activity.Setup1Activity"/>
+        <activity android:name=".activity.Setup2Activity"/>
     </application>
 <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
