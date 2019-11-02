@@ -16,7 +16,7 @@ import com.samlu.mobilesafe.utils.ToastUtil;
 /**
  * Created by sam lu on 2019/11/1.
  */
-public class Setup3Activity extends Activity{
+public class Setup3Activity extends BaseSetupActivity{
 
     private EditText et_phone_number;
     private Button bt_select_number;
@@ -58,7 +58,17 @@ public class Setup3Activity extends Activity{
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void nextPage(View view){
+    @Override
+    protected void showPrePage() {
+        Intent intent = new Intent(getApplicationContext() ,Setup2Activity.class);
+        startActivity(intent);
+        finish();
+        overridePendingTransition(R.anim.pre_in_anim,R.anim.pre_out_anim);
+
+    }
+
+    @Override
+    protected void showNextPage() {
         //点击按钮以后，需要获取框中的联系人
         String phone = et_phone_number.getText().toString();
 
@@ -75,9 +85,14 @@ public class Setup3Activity extends Activity{
             ToastUtil.show(getApplicationContext(),"请输入电话号码");
         }
     }
-    public  void prePage(View view){
-        Intent intent = new Intent(getApplicationContext() ,Setup2Activity.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.pre_in_anim,R.anim.pre_out_anim);
+
+    @Override
+    public void prePage(View view) {
+        super.prePage(view);
+    }
+
+    @Override
+    public void nextPage(View view) {
+        super.nextPage(view);
     }
 }
