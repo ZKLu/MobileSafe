@@ -70,6 +70,7 @@ public class Setup3Activity extends Activity{
 
             //如果是输入的电话号码,需要去保存
             SpUtil.putString(getApplicationContext(),ConstantValue.CONTACT_PHONE,phone);
+            overridePendingTransition(R.anim.next_in_anim,R.anim.next_out_anim);
         }else{
             ToastUtil.show(getApplicationContext(),"请输入电话号码");
         }
@@ -77,5 +78,6 @@ public class Setup3Activity extends Activity{
     public  void prePage(View view){
         Intent intent = new Intent(getApplicationContext() ,Setup2Activity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.pre_in_anim,R.anim.pre_out_anim);
     }
 }

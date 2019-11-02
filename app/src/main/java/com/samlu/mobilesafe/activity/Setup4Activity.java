@@ -61,6 +61,7 @@ public class Setup4Activity extends Activity{
             SpUtil.putBoolean(this, ConstantValue.SETUP_OVER,true);
             startActivity(intent);
             finish();
+            overridePendingTransition(R.anim.next_in_anim,R.anim.next_out_anim);
         }else {
             ToastUtil.show(getApplicationContext(),"请开启防盗保护");
         }
@@ -68,5 +69,6 @@ public class Setup4Activity extends Activity{
     public  void prePage(View view){
         Intent intent = new Intent(getApplicationContext() ,Setup3Activity.class);
         startActivity(intent);
+        overridePendingTransition(R.anim.pre_in_anim,R.anim.pre_out_anim);
     }
 }
