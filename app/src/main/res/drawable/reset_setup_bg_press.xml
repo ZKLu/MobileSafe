@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--作为背景，应用于activity_setup_over的TextView-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <!--android:angle值为45的倍数-->
+    <gradient
+        android:startColor="#ccc"
+        android:endColor="#ccc"
+        android:angle="45"/>
+    <padding android:left="3dp"
+        android:top="3dp"
+        android:right="3dp"
+        android:bottom="3dp"/>
+    <corners android:radius="8dp"/>
+</shape>

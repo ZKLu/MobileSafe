@@ -20,9 +20,11 @@ public abstract class BaseSetupActivity extends Activity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        gestureDetector = new GestureDetector(this,new GestureDetector.SimpleOnGestureListener(){
+        gestureDetector = new GestureDetector(this,
+                new GestureDetector.SimpleOnGestureListener(){
             @Override
-            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            public boolean onFling(MotionEvent e1, MotionEvent e2,
+                                   float velocityX, float velocityY) {
                 //监听手势的移动
                 if ((e1.getX()-e2.getX())>0){
                     //又右向左，移动到下一页
