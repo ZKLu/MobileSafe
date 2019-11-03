@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MobileSafe</string>
+    <string name="sample_device_admin" >设备管理器</string>
+    <string name="sample_device_admin_description">清除数据，远程锁屏</string>
 </resources>
