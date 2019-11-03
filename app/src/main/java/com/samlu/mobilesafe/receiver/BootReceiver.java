@@ -15,7 +15,6 @@ import com.samlu.mobilesafe.utils.SpUtil;
  */
 
 public class BootReceiver extends BroadcastReceiver {
-    private static final String TAG = "BootReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
