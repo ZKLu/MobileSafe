@@ -34,6 +34,7 @@ import org.json.JSONObject;
 import org.xutils.x;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -249,6 +250,53 @@ public class SplashActivity extends AppCompatActivity {
         initData();
         //初始化动画
         initAnimation();
+        //初始化数据库
+        initDB();
+    }
+
+    private void initDB() {
+        //归属地属地库拷贝过程
+        initAddressDB("address.db");
+    }
+
+    /**
+     * 拷贝数据库至files文件夹下
+    *@param dbName 数据库名称
+    *@return
+    */
+    private void initAddressDB(String dbName) {
+        //在files文件夹下创建dbName数据库文件过程
+        File files = getFilesDir();
+        File file = new File(files, dbName);
+        if (file.exists()){
+            return;
+        }
+        InputStream open = null;
+        FileOutputStream fos = null;
+        //输入流读取/assets下的文件
+        try {
+            open = getAssets().open(dbName);
+            //将读取的内容写入到指定文件夹中的文件中去
+            fos = new FileOutputStream(file);
+            byte[] bytes = new byte[1024];
+            int temp = -1;
+            while ((temp = open.read(bytes))!=-1){
+                fos.write(bytes,0,temp);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            if (open != null && fos != null){
+                try {
+                    open.close();
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
     }
 
     /**
