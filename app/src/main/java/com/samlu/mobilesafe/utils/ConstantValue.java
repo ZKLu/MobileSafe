@@ -42,4 +42,9 @@ public class ConstantValue {
      * 是否开启防护
      * */
     public static final String OPEN_SECURITY = "open_security";
+
+    /**
+     * 是否开启来电归属地显示
+     * */
+    public static final String OPEN_ADDRESS = "open_address";
 }

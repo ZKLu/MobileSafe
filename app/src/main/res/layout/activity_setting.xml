@@ -53,7 +53,7 @@
         xmlns:mobilesafe="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/siv_phone_location"
+        android:id="@+id/siv_address"
         mobilesafe:destitle="电话归属地的显示设置"
         mobilesafe:desoff="归属地显示已关闭"
         mobilesafe:deson="归属地显示已开启">

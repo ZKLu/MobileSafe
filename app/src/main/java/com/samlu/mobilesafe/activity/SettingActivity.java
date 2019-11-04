@@ -1,11 +1,14 @@
 package com.samlu.mobilesafe.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import com.samlu.mobilesafe.R;
+import com.samlu.mobilesafe.service.AddressService;
 import com.samlu.mobilesafe.utils.ConstantValue;
+import com.samlu.mobilesafe.utils.ServiceUtil;
 import com.samlu.mobilesafe.utils.SpUtil;
 import com.samlu.mobilesafe.view.SettingItemView;
 
@@ -19,6 +22,33 @@ public class SettingActivity extends Activity{
         setContentView(R.layout.activity_setting);
 
         initUpdate();
+        initAddress();
+    }
+    /**是否显示电话号码归属地
+    *@param
+    *@return
+    */
+    private void initAddress() {
+        //不能用sp去记录是否开启，因为当手机内存不够，会杀死服务，这就导致状态是打开，但是服务已经被杀死。
+        boolean isRunning = ServiceUtil.isRunning(this, "com.samlu.mobilesafe.service.AddressService");
+        final SettingItemView siv_address = findViewById(R.id.siv_address);
+        siv_address.setCheck(isRunning);
+        siv_address.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //返回点击前的状态
+                boolean isCheck = siv_address.isCheck();
+                //点击后的状态就是点击前的状态取反
+                siv_address.setCheck(!isCheck);
+                if (!isCheck){
+                    //开启服务，管理Toast
+                    startService(new Intent(getApplicationContext(),AddressService.class));
+                }else {
+                    //关闭服务，不需要Toast
+                    stopService(new Intent(getApplicationContext(),AddressService.class));
+                }
+            }
+        });
     }
 
     private void initUpdate() {
@@ -39,6 +69,4 @@ public class SettingActivity extends Activity{
         });
 
     }
-
-
 }
