@@ -70,7 +70,28 @@ public class SpUtil {
         }
         return sharedPreferences.getString(key,defValue);
     }
-    
+
+    /**获取Toast的样式颜色的索引值
+    *@param
+    *@return
+    */
+    public static int getInt(Context ctx,String key,int defValue){
+        if (sharedPreferences == null){
+            sharedPreferences = ctx.getSharedPreferences("config",Context.MODE_PRIVATE);
+        }
+        return sharedPreferences.getInt(key,defValue);
+    }
+
+    /**写入Toast的样式颜色的索引值
+    *@param
+    *@return
+    */
+    public static void putInt(Context ctx, String key, int value) {
+        if (sharedPreferences == null){
+            sharedPreferences = ctx.getSharedPreferences("config",Context.MODE_PRIVATE);
+        }
+        sharedPreferences.edit().putInt(key, value).commit();
+    }
     /**
      * 从sharepreference中移除节点
     *@param context 上下文环境
@@ -82,4 +103,6 @@ public class SpUtil {
         }
         sharedPreferences.edit().remove(key).commit();
     }
+
+
 }

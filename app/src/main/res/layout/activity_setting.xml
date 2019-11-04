@@ -60,6 +60,12 @@
     </com.samlu.mobilesafe.view.SettingItemView>
     <!--SettingItemView需要在构建布局的时候指定title和des字符串内容-->
     <!--自定义属性-->
+    <com.samlu.mobilesafe.view.SettingClickView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scv_toast_style">
+    </com.samlu.mobilesafe.view.SettingClickView>
+
 
 
 </LinearLayout>

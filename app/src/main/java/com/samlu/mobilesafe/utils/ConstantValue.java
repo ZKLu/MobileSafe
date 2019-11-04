@@ -43,8 +43,9 @@ public class ConstantValue {
      * */
     public static final String OPEN_SECURITY = "open_security";
 
+
     /**
-     * 是否开启来电归属地显示
-     * */
-    public static final String OPEN_ADDRESS = "open_address";
+     * Toast选择样式索引所在的key
+     */
+    public static final String TOAST_STYLE = "toast_style";
 }
