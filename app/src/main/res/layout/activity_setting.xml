@@ -65,6 +65,11 @@
         android:layout_height="wrap_content"
         android:id="@+id/scv_toast_style">
     </com.samlu.mobilesafe.view.SettingClickView>
+    <com.samlu.mobilesafe.view.SettingClickView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/scv_location">
+    </com.samlu.mobilesafe.view.SettingClickView>
 
 
 

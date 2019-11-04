@@ -26,6 +26,8 @@
         <activity android:name=".activity.Setup2Activity"/>
         <activity android:name=".activity.ContactListActivity"/>
         <activity android:name=".activity.AToolActivity"/>
+        <activity android:name=".activity.ToastLocationActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
         <activity android:name=".activity.QueryAddressActivity"/>
         <receiver android:name=".receiver.BootReceiver">
             <intent-filter>

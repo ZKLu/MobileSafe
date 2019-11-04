@@ -48,4 +48,14 @@ public class ConstantValue {
      * Toast选择样式索引所在的key
      */
     public static final String TOAST_STYLE = "toast_style";
+
+    /**
+     *iv_drag左上角的x轴
+     */
+    public static final String LOCATION_X = "location_x";
+
+    /**
+     * iv_drag左上角的y轴
+    * */
+    public static final String LOCATION_Y = "location_y";
 }
