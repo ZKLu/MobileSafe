@@ -64,7 +64,7 @@ public class BlackNumberActivity extends Activity{
                 //获取操作数据库对象
                 mDao = BlackNumberDao.getInstance(getApplicationContext());
                 //查询所有数据
-                mBlackNumberList = mDao.findAll();
+                mBlackNumberList = mDao.find(0);
                 //通过消息机制告诉主线程，可以使用包含数据的集合
                 mhandler.sendEmptyMessage(0);
             }
@@ -163,36 +163,39 @@ public class BlackNumberActivity extends Activity{
         }
 
 
-        //优化ListView的一种方式：复用convertView
+        //优化ListView的步骤一种：复用convertView
         /*if (convertView == null){
                convertView = View.inflate(getApplicationContext(), R.layout.listview_blacknumber_item,null);
            }*/
-        //优化ListView的一种方式：对findViewById()的次数的优化，使用viewHolder。将findViewById()封装到if(convertView == null)中去执行
+        //优化ListView的步骤二：对findViewById()的次数的优化，使用viewHolder。将findViewById()封装到if(convertView == null)中去执行
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder = null;
             if (convertView == null){
                convertView = View.inflate(getApplicationContext(), R.layout.listview_blacknumber_item,null);
-           }
+                viewHolder = new ViewHolder();
+                viewHolder.tv_phone = convertView.findViewById(R.id.tv_phone);
+                viewHolder.tv_mode =  convertView.findViewById(R.id.tv_mode);
+                viewHolder.iv_delete = convertView.findViewById(R.id.iv_delete);
+                convertView.setTag(viewHolder);
+            }else {
+                viewHolder = (ViewHolder) convertView.getTag();
+            }
 
-            TextView tv_phone = convertView.findViewById(R.id.tv_phone);
-            TextView tv_mode = convertView.findViewById(R.id.tv_mode);
-            ImageView iv_delete = convertView.findViewById(R.id.iv_delete);
-
-            tv_phone.setText(mBlackNumberList.get(position).phone);
+            viewHolder.tv_phone.setText(mBlackNumberList.get(position).phone);
             int mode = Integer.parseInt(mBlackNumberList.get(position).mode);
             switch (mode){
                 case  1:
-                    tv_mode.setText("拦截短信");
+                    viewHolder.tv_mode.setText("拦截短信");
                     break;
                 case  2:
-                    tv_mode.setText("拦截电话");
+                    viewHolder.tv_mode.setText("拦截电话");
                     break;
                 case  3:
-                    tv_mode.setText("拦截所有");
+                    viewHolder.tv_mode.setText("拦截所有");
                     break;
             }
-            iv_delete.setOnClickListener(new View.OnClickListener() {
+            viewHolder.iv_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //数据库删除数据
@@ -209,7 +212,9 @@ public class BlackNumberActivity extends Activity{
         }
     }
 
-    class ViewHolder{
-
+    static class ViewHolder{
+        TextView tv_phone;
+        TextView tv_mode;
+        ImageView iv_delete;
     }
 }

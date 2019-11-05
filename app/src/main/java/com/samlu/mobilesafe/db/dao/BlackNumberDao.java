@@ -87,4 +87,25 @@ public class BlackNumberDao {
 
         return blackNumberList;
     }
+
+    /**每次返回index后的20条数据
+    *@param
+    *@return 
+    */
+    public List<BlackNumberInfo> find(int index){
+        SQLiteDatabase db = blackNumberOpenHelper.getWritableDatabase();
+        Cursor cursor= db.rawQuery("select phone,mode from blacknumber order by _id desc limit ?,20",
+                new String[]{index+""});
+        List<BlackNumberInfo> blackNumberList = new ArrayList<>();
+        while (cursor.moveToNext()){
+            BlackNumberInfo blackNumberInfo = new BlackNumberInfo();
+            blackNumberInfo.phone = cursor.getString(0);
+            blackNumberInfo.mode = cursor.getString(1);
+            blackNumberList.add(blackNumberInfo);
+        }
+        cursor.close();
+        db.close();
+
+        return blackNumberList;
+    }
 }
