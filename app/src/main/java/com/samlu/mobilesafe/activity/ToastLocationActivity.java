@@ -42,7 +42,7 @@ public class ToastLocationActivity extends Activity{
 
         int locationX = SpUtil.getInt(getApplicationContext(), ConstantValue.LOCATION_X,0);
         int locationY = SpUtil.getInt(getApplicationContext(), ConstantValue.LOCATION_Y,0);
-        //父布局是RelativeLayout，所以其所在位置的规则需要有相对布局提供
+        //父布局是RelativeLayout，所以其所在位置的规则需要由相对布局提供
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(
                 RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         //将左上角的坐标作用iv_drag对应的规则参数上
@@ -70,6 +70,8 @@ public class ToastLocationActivity extends Activity{
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()){
                     case MotionEvent.ACTION_DOWN:
+                        //getRawX()是到屏幕左边框的距离
+                        //在这里的意思是点下去的点到屏幕左边的距离
                         startX = (int) event.getRawX();
                         startY = (int) event.getRawY();
 
@@ -81,7 +83,7 @@ public class ToastLocationActivity extends Activity{
                         int disX =  moveX - startX;
                         int disY = moveY - startY;
 
-                        //getLeft()返回这个view的左边到父view的距离，参照物时左上角
+                        //getLeft()返回这个view的左边到父view的距离，参照物是子view左上角
                         int left = iv_drag.getLeft()+disX;//移动后左侧坐标
                         //getTop();返回这个view的上边到父view的距离
                         int top = iv_drag.getTop()+disY;//移动后顶端坐标
@@ -103,13 +105,6 @@ public class ToastLocationActivity extends Activity{
                             return true;
                         }
 
-                        if (top>mScreenHeight/2){
-                            bt_bottom.setVisibility(View.INVISIBLE);
-                            bt_top.setVisibility(View.VISIBLE);
-                        }else {
-                            bt_top.setVisibility(View.INVISIBLE);
-                            bt_bottom.setVisibility(View.VISIBLE);
-                        }
 
                         //告知控件，按算出来的坐标去移动
                         iv_drag.layout(left,top,right,bottom);
@@ -123,8 +118,6 @@ public class ToastLocationActivity extends Activity{
                         SpUtil.putInt(getApplicationContext(), ConstantValue.LOCATION_Y,iv_drag.getTop());
 
                         break;
-
-
                 }
                 //在当前情况下，返回false是不响应移动事件，返回true是响应事件
                 //既要响应点击事件，又要响应拖拽事件，需要修改返回结果为false
@@ -145,6 +138,10 @@ public class ToastLocationActivity extends Activity{
                     int bottom = mScreenHeight/2+iv_drag.getHeight()/2;
 
                     iv_drag.layout(left,top,right,bottom);
+
+                    SpUtil.putInt(getApplicationContext(), ConstantValue.LOCATION_X,iv_drag.getLeft());
+                    SpUtil.putInt(getApplicationContext(), ConstantValue.LOCATION_Y,iv_drag.getTop());
+
                 }
             }
         });

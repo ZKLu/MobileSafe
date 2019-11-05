@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -40,6 +41,8 @@ public class AddressService extends Service{
     private String mAddress;
     private TextView tv_toast;
     private int[] mDrawableIds;
+    private int mScreenHeight;
+    private int mScreenWidth;
 
     @Nullable
     @Override
@@ -58,6 +61,9 @@ public class AddressService extends Service{
         mTM.listen(mPhoneStateListener,PhoneStateListener.LISTEN_CALL_STATE);
         //获取窗体对象
         mWM = (WindowManager) getSystemService(WINDOW_SERVICE);
+
+        mScreenHeight = mWM.getDefaultDisplay().getHeight();
+        mScreenWidth = mWM.getDefaultDisplay().getWidth();
         super.onCreate();
     }
 
@@ -115,6 +121,69 @@ public class AddressService extends Service{
         //定义Toast的显示效果,需要将Toast挂载到windowManager窗体上
         mViewToast = View.inflate(this, R.layout.toast_view, null);
         tv_toast = mViewToast.findViewById(R.id.tv_toast);
+
+        //设置Toast的接听界面的拖拽
+        mViewToast.setOnTouchListener(new View.OnTouchListener() {
+
+            private int startY;
+            private int startX;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN:
+                        startX = (int) event.getRawX();
+                        startY = (int) event.getRawY();
+
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        int moveX = (int) event.getRawX();
+                        int moveY = (int) event.getRawY();
+
+                        int disX =  moveX - startX;
+                        int disY = moveY - startY;
+
+                        params.x += disX;
+                        params.y += disY;
+
+                        //容错处理
+                        if (params.x<0){
+                            params.x = 0;
+                        }
+                        if (params.y <0){
+                            params.y = 0;
+                        }
+                        if (params.x +mViewToast.getWidth()> mScreenWidth){
+                            params.x = mScreenWidth - mViewToast.getWidth();
+                        }
+                        if (params.y + mViewToast.getHeight()> mScreenHeight -22  ){
+                            // 22是通知栏的高度
+                            params.y = mScreenHeight -22 - mViewToast.getHeight();
+                        }
+
+                        //告知窗体Toast需要按照手势的移动，去做位置的更新
+                        mWM.updateViewLayout(mViewToast,params);
+
+                        //重置起始坐标
+                        startX = (int) event.getRawX();
+                        startY = (int) event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        SpUtil.putInt(getApplicationContext(),ConstantValue.LOCATION_X,params.x);
+                        SpUtil.putInt(getApplicationContext(),ConstantValue.LOCATION_Y,params.y);
+                        break;
+                }
+                //在当前情况下，返回false是不响应移动事件，返回true是响应事件
+                //既要响应点击事件，又要响应拖拽事件，需要修改返回结果为false
+                return true;
+            }
+        });
+
+
+        //读取sp中存储的Toast位置的值
+        //params.x为Toast左上角的x轴
+        params.x = SpUtil.getInt(getApplicationContext(),ConstantValue.LOCATION_X,0);
+        params.y = SpUtil.getInt(getApplicationContext(),ConstantValue.LOCATION_Y,0);
 
         //从SharePreference中获取色值文字的索引，匹配图片
         //"透明","橙色","蓝色","灰色","绿色"
