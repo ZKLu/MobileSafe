@@ -14,7 +14,6 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.samlu.mobilesafe.R;
 import com.samlu.mobilesafe.utils.ConstantValue;
@@ -64,6 +63,9 @@ public class HomeActivity extends Activity{
                     case 0:
                         //开启对话框
                         showDialog();
+                        break;
+                    case 1:
+                        startActivity(new Intent(getApplicationContext(),BlackNumberActivity.class));
                         break;
                     case 7:
                         startActivity(new Intent(getApplicationContext(),AToolActivity.class));

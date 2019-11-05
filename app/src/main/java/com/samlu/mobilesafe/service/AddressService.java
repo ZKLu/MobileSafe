@@ -1,8 +1,10 @@
 package com.samlu.mobilesafe.service;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.IBinder;
@@ -43,6 +45,7 @@ public class AddressService extends Service{
     private int[] mDrawableIds;
     private int mScreenHeight;
     private int mScreenWidth;
+    private innerOutCallReceiver mInnerOutCallReceiver;
 
     @Nullable
     @Override
@@ -64,6 +67,15 @@ public class AddressService extends Service{
 
         mScreenHeight = mWM.getDefaultDisplay().getHeight();
         mScreenWidth = mWM.getDefaultDisplay().getWidth();
+
+        //监听播出电话的广播接收者
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_NEW_OUTGOING_CALL);
+        //创建广播接收者
+        mInnerOutCallReceiver = new innerOutCallReceiver();
+        //注册广播接收者
+        registerReceiver(mInnerOutCallReceiver,intentFilter);
+
         super.onCreate();
     }
 
@@ -72,6 +84,9 @@ public class AddressService extends Service{
         //取消对电话状态的监听（开启服务的时候监听电话的对象）
         if (mTM != null && mPhoneStateListener !=null){
             mTM.listen(mPhoneStateListener,PhoneStateListener.LISTEN_NONE);
+        }
+        if (mInnerOutCallReceiver != null){
+            unregisterReceiver(mInnerOutCallReceiver);
         }
         super.onDestroy();
     }
@@ -208,5 +223,14 @@ public class AddressService extends Service{
                 mHandler.sendEmptyMessage(0);
             }
         });
+    }
+
+    private class innerOutCallReceiver extends BroadcastReceiver{
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //接受到广播后，需要显示自定义Toast，显示拨出归属地
+            String phone = getResultData();//获取拨出号码的字符串
+            showToast(phone);
+        }
     }
 }
