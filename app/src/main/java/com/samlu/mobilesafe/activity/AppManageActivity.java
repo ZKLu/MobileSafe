@@ -6,20 +6,35 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.text.format.Formatter;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.samlu.mobilesafe.R;
+import com.samlu.mobilesafe.db.domin.AppInfo;
+import com.samlu.mobilesafe.engine.AppInfoProvider;
+
+import java.util.List;
 
 /**
  * Created by sam lu on 2019/11/6.
  */
 public class AppManageActivity extends Activity{
+
+    private ListView lv_app_list;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_manager);
 
         initTitle();
+        initListView();
+    }
+
+    private void initListView() {
+        lv_app_list = findViewById(R.id.lv_app_list);
+
+        List<AppInfo> appInfoList = AppInfoProvider.getAppInfoList(this);
     }
 
     private void initTitle() {
