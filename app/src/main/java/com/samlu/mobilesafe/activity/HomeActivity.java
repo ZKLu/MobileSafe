@@ -67,6 +67,9 @@ public class HomeActivity extends Activity{
                     case 1:
                         startActivity(new Intent(getApplicationContext(),BlackNumberActivity.class));
                         break;
+                    case 2:
+                        startActivity(new Intent(getApplicationContext(), AppManageActivity.class));
+                        break;
                     case 7:
                         startActivity(new Intent(getApplicationContext(),AToolActivity.class));
                         break;
