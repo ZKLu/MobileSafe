@@ -58,4 +58,9 @@ public class ConstantValue {
      * iv_drag左上角的y轴
     * */
     public static final String LOCATION_Y = "location_y";
+
+    /**
+     * 是否开启号码拦截
+     * */
+    public static final String OPEN_BLACKNUMBER = "open_blacknumber";
 }

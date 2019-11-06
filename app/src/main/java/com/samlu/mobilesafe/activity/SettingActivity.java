@@ -46,6 +46,7 @@ public class SettingActivity extends Activity{
     *@return
     */
     private void initBlackNumber() {
+        //boolean open_blacknumber = SpUtil.getBoolean(this,ConstantValue.OPEN_BLACKNUMBER,false);
         final SettingItemView siv_blacknumber = findViewById(R.id.siv_blacknumber);
         boolean isRunning = ServiceUtil.isRunning(this,"com.samlu.mobilesafe.service.BlackNumberService");
         siv_blacknumber.setCheck(isRunning);

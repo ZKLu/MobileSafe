@@ -5,6 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
+import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.telephony.PhoneStateListener;
@@ -26,6 +29,7 @@ public class BlackNumberService extends Service{
     private BlackNumberDao mDao ;
     private TelephonyManager mTM;
     private MyPhoneStateListener mPhoneStateListener;
+    private MyContentObserver mContentObserver;
 
     @Override
     public void onCreate() {
@@ -53,6 +57,12 @@ public class BlackNumberService extends Service{
     public void onDestroy() {
         if (mInnerSmsReceiver !=null){
             unregisterReceiver(mInnerSmsReceiver);
+        }
+        if (mContentObserver != null){
+            getContentResolver().unregisterContentObserver(mContentObserver);
+        }
+        if (mPhoneStateListener != null){
+            mTM.listen(mPhoneStateListener,PhoneStateListener.LISTEN_NONE);
         }
         super.onDestroy();
     }
@@ -103,6 +113,12 @@ public class BlackNumberService extends Service{
             } catch (Exception e) {
                     e.printStackTrace();
             }
+
+            //删除被拦截电话号码的通信记录
+            //通过内容观察者，观察数据库变化
+            mContentObserver = new MyContentObserver(new Handler(), phone);
+            getContentResolver().registerContentObserver(Uri.parse("content://call_log/calls"),
+                    true,mContentObserver);
         }
     }
 
@@ -126,6 +142,28 @@ public class BlackNumberService extends Service{
                     abortBroadcast();
                 }
             }
+        }
+    }
+
+    private class MyContentObserver extends ContentObserver {
+
+        /**
+         * Creates a content observer.
+         *
+         * @param handler The handler to run {@link #onChange} on, or null if none.
+         */
+        private String phone;
+        public MyContentObserver(Handler handler,String phone) {
+            super(handler);
+            this.phone = phone;
+        }
+        //数据库中指定的表发生改变时会调用的方法
+        @Override
+        public void onChange(boolean selfChange) {
+            //插入一条数据后再进行删除
+            getContentResolver().delete(Uri.parse("content://call_log/calls"),
+                    "number=?",new String[]{phone});
+            super.onChange(selfChange);
         }
     }
 }
