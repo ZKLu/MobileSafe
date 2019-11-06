@@ -10,8 +10,12 @@ import android.support.annotation.Nullable;
 import android.telephony.PhoneStateListener;
 import android.telephony.SmsMessage;
 import android.telephony.TelephonyManager;
+import com.android.internal.telephony.ITelephony;
 
 import com.samlu.mobilesafe.db.dao.BlackNumberDao;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Created by sam lu on 2019/11/6.
@@ -19,12 +23,14 @@ import com.samlu.mobilesafe.db.dao.BlackNumberDao;
 public class BlackNumberService extends Service{
 
     private InnerSmsReceiver mInnerSmsReceiver;
-    private BlackNumberDao mDao;
+    private BlackNumberDao mDao ;
     private TelephonyManager mTM;
     private MyPhoneStateListener mPhoneStateListener;
 
     @Override
     public void onCreate() {
+        mDao = BlackNumberDao.getInstance(this);
+
         //拦截短信
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("android.provider.Telephony.SMS_RECEIVED");
@@ -70,10 +76,33 @@ public class BlackNumberService extends Service{
                     break;
                 case TelephonyManager.CALL_STATE_RINGING:
                     //响铃状态，识别电话号码，如果跟黑名单的匹配，挂断电话
-
+                    endCall(incomingNumber);
                     break;
             }
             super.onCallStateChanged(state, incomingNumber);
+        }
+    }
+
+    private void endCall(String phone) {
+        int mode = mDao.getMode(phone);
+        if (mode ==2 || mode ==3){
+            //拦截电话
+            //ServiceManager类对开发者隐藏，不能直接调用，需要反射调用
+            //ITelephony.Stub.asInterface(ServiceManager.getService(Context.TELECOM_SERVICE));
+            try {
+                //步骤1、获取ServiceManager的字节码文件
+                Class<?> clazz = Class.forName("android.os.ServiceManager");
+                //步骤2、获取方法
+                Method method = clazz.getMethod("getService", String.class);
+                //步骤3、反射调用此方法
+                IBinder iBinder = (IBinder) method.invoke(null, Context.TELECOM_SERVICE);
+                //步骤4、获取aidl文件对象方法
+                ITelephony iTelephony = ITelephony.Stub.asInterface(iBinder);
+                //步骤5、调用在aidl中隐藏的endCall();
+                iTelephony.endCall();
+            } catch (Exception e) {
+                    e.printStackTrace();
+            }
         }
     }
 
@@ -91,7 +120,6 @@ public class BlackNumberService extends Service{
                 String OriginatingAddress = sms.getOriginatingAddress();
                 String messageBody = sms.getMessageBody();
 
-                mDao = BlackNumberDao.getInstance(context);
                 int mode = mDao.getMode(OriginatingAddress);
                 if (mode ==1 || mode ==3){
                     //拦截短信
