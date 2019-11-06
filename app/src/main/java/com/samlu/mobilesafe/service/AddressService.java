@@ -93,7 +93,6 @@ public class AddressService extends Service{
 
     class MyPhoneStateListener extends PhoneStateListener{
         //手动重写，电话状态发生改变会触发的方法
-
         @Override
         public void onCallStateChanged(int state, String incomingNumber) {
             switch (state){

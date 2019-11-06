@@ -8,6 +8,7 @@ import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,17 +36,22 @@ public class BlackNumberActivity extends Activity{
     private int mode =1;
     private Button bt_add;
     private View view;
+    private boolean mIsLoad =false;
+    private int mCount;
 
     private Handler mhandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            //告知ListView可以去设置数据适配器
-            myAdapter = new MyAdapter();
-            lv_blacknumber.setAdapter(myAdapter);
+            if (myAdapter == null){
+                //告知ListView可以去设置数据适配器
+                myAdapter = new MyAdapter();
+                lv_blacknumber.setAdapter(myAdapter);
+            }
+            else {
+                myAdapter.notifyDataSetChanged();
+            }
         }
     };
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +73,9 @@ public class BlackNumberActivity extends Activity{
                 mBlackNumberList = mDao.find(0);
                 //通过消息机制告诉主线程，可以使用包含数据的集合
                 mhandler.sendEmptyMessage(0);
+
+                //获取数据库中条目的总数
+                mCount = mDao.getCount();
             }
         }.start();
     }
@@ -79,6 +88,49 @@ public class BlackNumberActivity extends Activity{
             @Override
             public void onClick(View v) {
                 showDialog();
+            }
+        });
+
+        //监听ListView的滚动状态
+        lv_blacknumber.setOnScrollListener(new AbsListView.OnScrollListener() {
+            //滚动过程中，状态发生改变调用的方法
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                //AbsListView.OnScrollListener.SCROLL_STATE_FLING 快速滚动状态
+                //AbsListView.OnScrollListener.SCROLL_STATE_IDLE 空闲状态
+                //AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL 拿手触摸着去滚动状态
+
+                if (mBlackNumberList != null){
+                    //条件一：滚动到停止状态（空闲状态）
+                    //条件二：最后一个条目可见，拿到最后一个条目的索引值>=适配器中集合的条目总数-1 ，返回true,说明还有数据
+                    if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE
+                            && lv_blacknumber.getLastVisiblePosition() >= mBlackNumberList.size()-1
+                            && !mIsLoad){/*mIsLoad防止重复加载的变量。如果当前正在mIsLoad为true，本次加载完毕后，再将mIsLoad改为false
+                        如果下一次加载需要去执行的时候，会判断mIsLoad，如果为true,则等待上一次加载完成，将值改为false*/
+
+                        //条目总数大于集合大小，说明还有数据未显示，可以加载下一页数据
+                        if (mCount >mBlackNumberList.size()){
+                            //加载下一页数据
+                            new Thread(){
+                                @Override
+                                public void run() {
+                                    //获取操作数据库对象
+                                    mDao = BlackNumberDao.getInstance(getApplicationContext());
+                                    //查询所有数据
+                                    List<BlackNumberInfo> moreData = mDao.find(mBlackNumberList.size());
+                                    //把moreData加到List后面
+                                    mBlackNumberList.addAll(moreData);
+                                    //通知数据适配器刷新
+                                    mhandler.sendEmptyMessage(0);
+                                }
+                            }.start();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
             }
         });
     }

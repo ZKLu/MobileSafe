@@ -70,7 +70,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/scv_location">
     </com.samlu.mobilesafe.view.SettingClickView>
-
+    <com.samlu.mobilesafe.view.SettingItemView
+        xmlns:mobilesafe="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/siv_blacknumber"
+        mobilesafe:destitle="黑名单拦截设置"
+        mobilesafe:desoff="黑名单拦截已关闭"
+        mobilesafe:deson="黑名单拦截已开启">
+    </com.samlu.mobilesafe.view.SettingItemView>
 
 
 </LinearLayout>

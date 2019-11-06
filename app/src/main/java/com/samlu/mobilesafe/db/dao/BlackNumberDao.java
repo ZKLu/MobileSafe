@@ -10,6 +10,7 @@ import com.samlu.mobilesafe.db.domin.BlackNumberInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Created by sam lu on 2019/11/5.
@@ -18,6 +19,7 @@ import java.util.List;
 public class BlackNumberDao {
 
     private final BlackNumberOpenHelper blackNumberOpenHelper;
+    private int count;
 
     //BlackNumberDao单例模式
     //1、私有化构造方法
@@ -107,5 +109,37 @@ public class BlackNumberDao {
         db.close();
 
         return blackNumberList;
+    }
+
+    /**
+    *@param
+    *@return 返回数据库中条目的总数
+    */
+    public int getCount(){
+        SQLiteDatabase db = blackNumberOpenHelper.getWritableDatabase();
+        Cursor cursor= db.rawQuery("select count(*) from blacknumber;",null);
+        int count = 0;
+        while (cursor.moveToNext()){
+            count =  cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return count;
+    }
+
+    /**根据电话号码，查找拦截模式
+    *@param phone 要查询拦截模式的电话号码
+    *@return 拦截模式 1：短信 2：电话 3：所有 4：没有电话
+    */
+    public int getMode(String phone){
+        SQLiteDatabase db = blackNumberOpenHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select mode from blacknumber where phone=;",new String[]{phone});
+        int mode = 0;
+        while (cursor.moveToNext()){
+            mode = cursor.getInt(0);
+        }
+        cursor.close();
+        db.close();
+        return mode;
     }
 }

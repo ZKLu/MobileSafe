@@ -2,6 +2,7 @@ package com.samlu.mobilesafe.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Service;
 import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.view.View;
 
 import com.samlu.mobilesafe.R;
 import com.samlu.mobilesafe.service.AddressService;
+import com.samlu.mobilesafe.service.BlackNumberService;
 import com.samlu.mobilesafe.utils.ConstantValue;
 import com.samlu.mobilesafe.utils.ServiceUtil;
 import com.samlu.mobilesafe.utils.SpUtil;
@@ -36,6 +38,29 @@ public class SettingActivity extends Activity{
         initAddress();
         initToastStyle();
         initLocation();
+        initBlackNumber();
+    }
+
+    /**拦截黑名单短信和电话
+    *@param
+    *@return
+    */
+    private void initBlackNumber() {
+        final SettingItemView siv_blacknumber = findViewById(R.id.siv_blacknumber);
+        boolean isRunning = ServiceUtil.isRunning(this,"com.samlu.mobilesafe.service.BlackNumberService");
+        siv_blacknumber.setCheck(isRunning);
+        siv_blacknumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isCheck = siv_blacknumber.isCheck();
+               siv_blacknumber.setCheck(!isCheck);
+                if (!isCheck){
+                    startService(new Intent(getApplicationContext(),BlackNumberService.class));
+                }else {
+                    stopService(new Intent(getApplicationContext(),BlackNumberService.class));
+                }
+            }
+        });
     }
 
     /**双击集中view所在屏幕位置的处理方法

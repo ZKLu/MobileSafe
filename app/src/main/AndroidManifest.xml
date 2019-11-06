@@ -41,6 +41,7 @@
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
             </intent-filter>
         </receiver>
+        <service android:name=".service.BlackNumberService"/>
         <service android:name=".service.LocationService"/>
         <service android:name=".service.AddressService"/>
     </application>
