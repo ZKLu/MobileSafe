@@ -14,13 +14,15 @@
             android:text="磁盘可用"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_memory"/>
+            android:id="@+id/tv_memory"
+            android:textSize="10dp"/>
         <TextView
             android:text="sd卡可用"
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_sd_memory"/>
+            android:id="@+id/tv_sd_memory"
+            android:textSize="10dp"/>
     </RelativeLayout>
     <ListView
         android:id="@+id/lv_app_list"
