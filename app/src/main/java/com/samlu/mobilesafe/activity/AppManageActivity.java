@@ -9,6 +9,7 @@ import android.os.StatFs;
 import android.text.format.Formatter;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -39,6 +40,7 @@ public class AppManageActivity extends Activity{
     private MyAdapter mAdapter;
     private List<AppInfo> mSystemList;
     private List<AppInfo> mCustomerList;
+    private TextView tv_title_type;
 
     class MyAdapter extends BaseAdapter{
         //在ListView中添加多一种条目的类型，现在条目类型总数为2
@@ -155,6 +157,27 @@ public class AppManageActivity extends Activity{
 
     private void initListView() {
         lv_app_list = findViewById(R.id.lv_app_list);
+        tv_title_type = findViewById(R.id.tv_title_type);
+        lv_app_list.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+                //滚动过程中调用的方法
+                if (mCustomerList != null && mSystemList != null) {
+                    if (firstVisibleItem >= mCustomerList.size() + 1) {
+                        //滚动到系统应用
+                        tv_title_type.setText("系统应用（"+mSystemList.size()+"）");
+                    } else {
+                        //滚动到用户应用
+                        tv_title_type.setText("用户应用（"+mCustomerList.size()+"）");
+                    }
+                }
+            }
+        });
+
         new Thread(){
             @Override
             public void run() {

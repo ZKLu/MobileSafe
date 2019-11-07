@@ -24,10 +24,22 @@
             android:id="@+id/tv_sd_memory"
             android:textSize="10dp"/>
     </RelativeLayout>
-    <ListView
-        android:id="@+id/lv_app_list"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+        <ListView
+            android:id="@+id/lv_app_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </ListView>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_title_type"
+            android:textColor="#fff"
+            android:background="#ccc"
+            android:padding="5dp"
+            android:textSize="16sp"/>
+    </FrameLayout>
 
-    </ListView>
 </LinearLayout>
