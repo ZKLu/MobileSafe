@@ -1,6 +1,12 @@
 package com.samlu.mobilesafe.activity;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -9,15 +15,23 @@ import android.os.StatFs;
 import android.text.format.Formatter;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.samlu.mobilesafe.R;
 import com.samlu.mobilesafe.db.domin.AppInfo;
 import com.samlu.mobilesafe.engine.AppInfoProvider;
+import com.samlu.mobilesafe.utils.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +39,9 @@ import java.util.List;
 /**
  * Created by sam lu on 2019/11/6.
  */
-public class AppManageActivity extends Activity{
+public class AppManageActivity extends Activity implements View.OnClickListener {
 
+    private AppInfo mAppInfo;
     private ListView lv_app_list;
     private List<AppInfo> mAppInfoList;
     private Handler mhandler = new Handler(){
@@ -41,6 +56,8 @@ public class AppManageActivity extends Activity{
     private List<AppInfo> mSystemList;
     private List<AppInfo> mCustomerList;
     private TextView tv_title_type;
+    private PopupWindow mPopupWindow;
+
 
     class MyAdapter extends BaseAdapter{
         //在ListView中添加多一种条目的类型，现在条目类型总数为2
@@ -155,6 +172,33 @@ public class AppManageActivity extends Activity{
         initListView();
     }
 
+    @Override
+    protected void onResume() {
+        //popupwindow点击卸载后，重新获取焦点
+        getData();
+        super.onResume();
+    }
+
+    private void getData() {
+        new Thread(){
+            @Override
+            public void run() {
+                mCustomerList = new ArrayList<AppInfo>();
+                mSystemList = new ArrayList<AppInfo>();
+                mAppInfoList = AppInfoProvider.getAppInfoList(getApplicationContext());
+                //分开系统应用和用户应用
+                for (AppInfo appInfo : mAppInfoList){
+                    if(appInfo.isSystem){
+                        mSystemList.add(appInfo);
+                    }else {
+                        mCustomerList.add(appInfo);
+                    }
+                }
+                mhandler.sendEmptyMessage(0);
+            }
+        }.start();
+    }
+
     private void initListView() {
         lv_app_list = findViewById(R.id.lv_app_list);
         tv_title_type = findViewById(R.id.tv_title_type);
@@ -178,25 +222,111 @@ public class AppManageActivity extends Activity{
             }
         });
 
-        new Thread(){
-            @Override
-            public void run() {
-                mCustomerList = new ArrayList<AppInfo>();
-                mSystemList = new ArrayList<AppInfo>();
-                mAppInfoList = AppInfoProvider.getAppInfoList(getApplicationContext());
-                //分开系统应用和用户应用
-                for (AppInfo appInfo : mAppInfoList){
-                    if(appInfo.isSystem){
-                        mSystemList.add(appInfo);
-                    }else {
-                        mCustomerList.add(appInfo);
-                    }
-                }
-                mhandler.sendEmptyMessage(0);
-            }
-        }.start();
 
+        lv_app_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            //参数view是指点中item指向的view对象
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position ==0 || position == mCustomerList.size()+1){
+                    return;
+                }else {
+                    if (position< mCustomerList.size()+1){
+                        mAppInfo = mCustomerList.get(position -1);
+
+                    }else {
+                        mAppInfo = mSystemList.get(position -mCustomerList.size()-2);
+                    }
+                    showPopupWindow(view);
+                }
+            }
+        });
     }
+
+    private void showPopupWindow(View view) {
+        View popupView = View.inflate(this, R.layout.popupwinddow_layout, null);
+        TextView tv_uninstall = popupView.findViewById(R.id.tv_uninstall);
+        TextView tv_share = popupView.findViewById(R.id.tv_share);
+        TextView tv_start = popupView.findViewById(R.id.tv_start);
+
+        tv_uninstall.setOnClickListener(this);
+        tv_start.setOnClickListener(this);
+        tv_share.setOnClickListener(this);
+
+        //透明动画（透明->不透明）
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0,1);
+        alphaAnimation.setDuration(1000);
+        alphaAnimation.setFillAfter(true);
+        //缩放动画
+        ScaleAnimation scaleAnimation = new ScaleAnimation(0, 1, 0, 1,
+                Animation.RELATIVE_TO_SELF, 0.5F,
+                Animation.RELATIVE_TO_SELF, 0.5f);
+        /*fromX 动画起始时 X坐标上的伸缩尺寸
+        toX 动画结束时 X坐标上的伸缩尺寸
+        fromY 动画起始时Y坐标上的伸缩尺寸
+        toY 动画结束时Y坐标上的伸缩尺寸
+        pivotXType 动画在X轴相对于物件位置类型
+        pivotXValue 动画相对于物件的X坐标的开始位置
+        pivotYType 动画在Y轴相对于物件位置类型
+        pivotYValue 动画相对于物件的Y坐标的开始位置*/
+        scaleAnimation.setDuration(1000);
+        scaleAnimation.setFillAfter(true);
+
+        AnimationSet animationSet = new AnimationSet(true);
+        //添加两个动画
+        animationSet.addAnimation(alphaAnimation);
+        animationSet.addAnimation(scaleAnimation);
+
+        //创建窗体对象，设置宽高
+        mPopupWindow = new PopupWindow(popupView, LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT, true);
+        //设置背景，已经在布局文件上设置了蓝色背景。但在代码这里不设置背景会无法响应返回按钮，所以设置一个透明背景
+        mPopupWindow.setBackgroundDrawable(new ColorDrawable());//new ColorDrawable()没有参数是透明
+        //指定窗体位置
+        mPopupWindow.showAsDropDown(view,50,-2*view.getHeight());
+
+        popupView.startAnimation(animationSet);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.tv_uninstall:
+                if (mAppInfo.isSystem){
+                    ToastUtil.show(getApplicationContext(),"此应用不能卸载");
+                }else {
+                    Intent intent = new Intent("android.intent.action.DELETE");
+                    intent.addCategory("android.intent.category,DEFAULT");
+                    intent.setData(Uri.parse("package:"+mAppInfo.packageName));
+                    startActivity(intent);
+                }
+                break;
+            case R.id.tv_start:
+                //通过桌面启动指定包名应用
+                PackageManager packageManager = getPackageManager();
+                //获取桌面的意图给指定包做开启应用的操作
+                Intent launchIntentForPackage = packageManager.getLaunchIntentForPackage(mAppInfo.packageName);
+                if (launchIntentForPackage != null){
+                    startActivity(launchIntentForPackage);
+                }
+                else{
+                    ToastUtil.show(getApplicationContext(),"此应用不能开启");
+                }
+                break;
+            case R.id.tv_share:
+                //分享到第三方应用
+                //通过短信应用，向外发送短信
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_TEXT,"分享一个应用，应用名称为"+mAppInfo.getName());
+                intent.setType("text/plain");
+                startActivity(intent);
+                break;
+        }
+        //点击了窗体后，窗体消失
+        if (mPopupWindow != null){
+            mPopupWindow.dismiss();
+        }
+    }
+
 
     private void initTitle() {
         //获取内部存储可用大小
