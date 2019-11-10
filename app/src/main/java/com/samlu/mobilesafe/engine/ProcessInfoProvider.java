@@ -51,7 +51,7 @@ public class ProcessInfoProvider {
 
     /**返回设备的内存书
     *@param
-    *@return
+    *@return 单位是bytes，返回0代表异常
     */
     public static long getTotalleSpace(Context ctx){
         FileReader fileReader =null;
