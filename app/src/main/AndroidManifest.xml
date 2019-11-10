@@ -16,6 +16,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.ProcessManageActivity"/>
         <activity android:name=".activity.AppManageActivity"/>
         <activity android:name="com.samlu.mobilesafe.activity.HomeActivity"/>
         <activity android:name="com.samlu.mobilesafe.activity.SettingActivity"/>
