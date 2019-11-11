@@ -140,4 +140,15 @@ public class ProcessInfoProvider {
         }
         return processInfoList;
     }
+
+    /**杀死进程
+    *@param ctx 上下文环境
+     *          @param killProcess 杀死进程所在的java bean对象
+    *@return
+    */
+    public static void killProcess(Context ctx , ProcessInfo killProcess) {
+        ActivityManager am = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
+        //杀死进程，需要权限
+        am.killBackgroundProcesses(killProcess.packageName);
+    }
 }

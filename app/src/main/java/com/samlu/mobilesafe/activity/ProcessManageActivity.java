@@ -8,6 +8,7 @@ import android.text.format.Formatter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.samlu.mobilesafe.R;
 import com.samlu.mobilesafe.db.domin.ProcessInfo;
 import com.samlu.mobilesafe.engine.ProcessInfoProvider;
+import com.samlu.mobilesafe.utils.ToastUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +29,12 @@ import java.util.List;
  */
 public class ProcessManageActivity extends Activity implements View.OnClickListener{
 
+    ProcessInfo mProcessInfo;
     private TextView tv_process_count,tv_memory_info;
     private ListView lv_process_list;
     private Button bt_select_all,bt_reverse,bt_clean,bt_setting;
     private int mProcessCount;
-    private List<ProcessInfo> mProcessInfo;
+    private List<ProcessInfo> mProcessInfoList;
     private ArrayList<ProcessInfo> mSystemList,mCustomerList;
     private CheckBox cb_box;
     private MyAdapter mAdapter;
@@ -47,6 +50,8 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
         }
     };
     private TextView tv_des;
+    private long mAvailableSpace;
+    private String mStrTotalSpace;
 
 
     class MyAdapter extends BaseAdapter {
@@ -72,7 +77,7 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
 
         @Override
         public int getCount() {
-            return mProcessInfo.size() +2;
+            return mProcessInfoList.size() +2;
         }
 
         @Override
@@ -177,11 +182,11 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
         new Thread(){
             @Override
             public void run() {
-                mProcessInfo = ProcessInfoProvider.getProcessInfo(getApplicationContext());
+                mProcessInfoList = ProcessInfoProvider.getProcessInfo(getApplicationContext());
                 mSystemList = new ArrayList<ProcessInfo>();
                 mCustomerList = new ArrayList<ProcessInfo>();
                 //分开系统应用和用户应用
-                for (ProcessInfo info : mProcessInfo){
+                for (ProcessInfo info : mProcessInfoList){
                     if(info.isSystem){
                         mSystemList.add(info);
                     }else {
@@ -198,12 +203,12 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
         tv_process_count.setText("进程总数："+mProcessCount);
 
         //获取可用内存大小，并且格式化
-        long availableSpace = ProcessInfoProvider.getAvailableSpace(this);
-        String strAvailebleSpace = Formatter.formatFileSize(this, availableSpace);
+        mAvailableSpace = ProcessInfoProvider.getAvailableSpace(this);
+        String strAvailebleSpace = Formatter.formatFileSize(this, mAvailableSpace);
 
         //获取总内存大小，并且格式化(文件大小转换，第二个参数不断处除1024，直到小于900)
         long totalleSpace = ProcessInfoProvider.getTotalleSpace(this);
-        String strTotalSpace = Formatter.formatFileSize(this, totalleSpace);
+        mStrTotalSpace = Formatter.formatFileSize(this, totalleSpace);
 
         tv_memory_info.setText("剩余/总共："+strAvailebleSpace+"/"+strAvailebleSpace);
     }
@@ -241,10 +246,136 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
                 }
             }
         });
+        lv_process_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            //参数view是指点中item指向的view对象
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (position ==0 || position == mCustomerList.size()+1){
+                    return;
+                }else {
+                    if (position< mCustomerList.size()+1){
+                        mProcessInfo = mCustomerList.get(position -1);
+
+                    }else {
+                        mProcessInfo = mSystemList.get(position -mCustomerList.size()-2);
+                    }
+                   if (mProcessInfo != null){
+                       if (mProcessInfo.packageName.equals(getPackageName())){
+                           mProcessInfo.isCheck = !mProcessInfo.isCheck;
+                           CheckBox cb_box = view.findViewById(R.id.cb_box);
+                           cb_box.setChecked(mProcessInfo.isCheck);
+                       }
+
+                   }
+                }
+            }
+        });
     }
 
     @Override
     public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.bt_select_all:
+                selectAll();
+                break;
+            case R.id.bt_reverse:
+                selectReverse();
+                break;
+            case R.id.bt_clean:
+                //一键清理
+                cleanAll();
+                break;
+            case R.id.bt_setting:
+                break;
+        }
 
+    }
+    /**清理选中进程
+    *@param
+    *@return
+    */
+    private void cleanAll() {
+        //创建一个记录需要杀死的进程的集合
+        ArrayList<ProcessInfo> killProcessList = new ArrayList<>();
+        for (ProcessInfo processInfo : mCustomerList){
+            if (processInfo.getPackageName().equals(getPackageName())){
+                continue;
+            }
+            if (processInfo.isCheck){
+                //不能在集合循环过程中，移除集合中的对象，所以创建一个集合存放需要杀死的进程，循环结束后再杀死
+                //记录需要杀死的进程对象
+                killProcessList.add(processInfo);
+            }
+        }
+        for (ProcessInfo processInfo : mSystemList){
+            if (processInfo.isCheck){
+                killProcessList.add(processInfo);
+            }
+        }
+        long totalReleaseSpace = 0;
+        //循环遍历killProcessList,去除mSystemList和mCustomerList中的指定对象
+        for (ProcessInfo killProcess : killProcessList){
+            //判断进程在哪个集合中
+            if (mCustomerList.contains(killProcess)){
+                mCustomerList.remove(killProcess);
+            }
+            if (mSystemList.contains(killProcess)){
+                mSystemList.remove(killProcess);
+            }
+            //杀死指定进程
+            ProcessInfoProvider.killProcess(this,killProcess);
+            //记录释放内存的总大小
+            totalReleaseSpace += killProcess.memSize;
+        }
+        //通知数据适配器刷新
+        if (mAdapter != null){
+            mAdapter.notifyDataSetChanged();
+        }
+        //更新进程总数
+        mProcessCount -= killProcessList.size();
+        //更新剩余内存(释放内存+原剩余内存)
+        mAvailableSpace += totalReleaseSpace;
+        //更新TextView的内容
+        tv_process_count.setText("进程总数："+mProcessCount);
+        tv_memory_info.setText("剩余/总共："+Formatter.formatFileSize(this,mAvailableSpace)+"/"+mStrTotalSpace);
+       /* ToastUtil.show(getApplicationContext(),
+                "杀死了"+killProcessList.size()+"进程，" +
+                        "释放了"+Formatter.formatFileSize(this,totalReleaseSpace)+"空间");*/
+        String totalRelease = Formatter.formatFileSize(this,totalReleaseSpace);
+        //使用占位符的写法
+        ToastUtil.show(getApplicationContext(),
+                String.format("杀死了%d个进程，释放了%s空间",killProcessList.size(),totalRelease));
+    }
+
+    private void selectReverse() {
+        //将所有的集合中的对象上isCheck字段设置为true，排除当前应用
+        for (ProcessInfo processInfo : mCustomerList){
+            if (processInfo.getPackageName().equals(getPackageName())){
+                continue;
+            }
+            processInfo.isCheck = !processInfo.isCheck;
+        }
+        for (ProcessInfo processInfo : mSystemList) {
+            processInfo.isCheck = !processInfo.isCheck;
+        }
+        if (mAdapter != null){
+            mAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private void selectAll() {
+        //将所有的集合中的对象上isCheck字段取反，排除当前应用
+        for (ProcessInfo processInfo : mCustomerList){
+            if (processInfo.getPackageName().equals(getPackageName())){
+                continue;
+            }
+            processInfo.isCheck =true;
+        }
+        for (ProcessInfo processInfo : mSystemList) {
+            processInfo.isCheck = true;
+        }
+        if (mAdapter != null){
+            mAdapter.notifyDataSetChanged();
+        }
     }
 }

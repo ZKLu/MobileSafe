@@ -46,6 +46,8 @@
         <service android:name=".service.LocationService"/>
         <service android:name=".service.AddressService"/>
     </application>
+    <!--杀死后台进程-->
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
     <uses-permission android:name="android.permission.READ_SMS"/>
     <uses-permission android:name="android.permission.WRITE_SMS"/>
     <uses-permission android:name="android.permission.WRITE_CALL_LOG"/>
