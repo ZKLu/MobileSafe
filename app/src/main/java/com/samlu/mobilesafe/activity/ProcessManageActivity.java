@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -38,9 +39,10 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
     private ArrayList<ProcessInfo> mSystemList,mCustomerList;
     private CheckBox cb_box;
     private MyAdapter mAdapter;
-    private Handler mhandler = new Handler(){
+    private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
+            Log.i("ProcessManageActivity","进入handleMessage");
             //使用数据适配器
             mAdapter = new MyAdapter();
             lv_process_list.setAdapter(mAdapter);
@@ -77,7 +79,7 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
 
         @Override
         public int getCount() {
-            return mProcessInfoList.size() +2;
+            return mCustomerList.size() +mSystemList.size() +2;
         }
 
         @Override
@@ -101,6 +103,7 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
+            Log.i("ProcessManageActivity","进入getView");
             //判断当前Position指向的条目类型的状态码
             int itemViewType = getItemViewType(position);
             if (itemViewType == 0){
@@ -122,10 +125,11 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
                 return convertView;
             }else{
                 //图文item
-                ViewHolder holder = new ViewHolder();
+                ViewHolder holder = null;
                 //判断convertView是否为空
                 if (convertView == null){
                     convertView = View.inflate(getApplicationContext(),R.layout.listview_process_item,null);
+                    holder = new ViewHolder();
                     //获取控件，赋值给ViewHolder
                     holder.iv_icon = convertView.findViewById(R.id.iv_icon);
                     holder.tv_app_name = convertView.findViewById(R.id.tv_app_name);
@@ -176,6 +180,7 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
 
     private void initListData() {
        getData();
+        Log.i("ProcessManageActivity","进入initListData");
     }
 
     private void getData(){
@@ -193,12 +198,13 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
                         mCustomerList.add(info);
                     }
                 }
-                mhandler.sendEmptyMessage(0);
+                mHandler.sendEmptyMessage(0);
             }
         }.start();
     }
 
     private void initTitleData() {
+        Log.i("ProcessManageActivity","进入initTitleData");
         mProcessCount = ProcessInfoProvider.getProcssCount(this);
         tv_process_count.setText("进程总数："+mProcessCount);
 
@@ -214,6 +220,7 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
     }
 
     private void initUI() {
+        Log.i("ProcessManageActivity","进入initUI");
         tv_process_count = findViewById(R.id.tv_process_count);
         tv_memory_info = findViewById(R.id.tv_memory_info);
         lv_process_list = findViewById(R.id.lv_process_list);

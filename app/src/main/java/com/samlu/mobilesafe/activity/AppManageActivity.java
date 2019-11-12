@@ -255,7 +255,7 @@ public class AppManageActivity extends Activity implements View.OnClickListener 
         //透明动画（透明->不透明）
         AlphaAnimation alphaAnimation = new AlphaAnimation(0,1);
         alphaAnimation.setDuration(1000);
-        alphaAnimation.setFillAfter(true);
+        alphaAnimation.setFillAfter(true);//动画终止时停留在最后一帧
         //缩放动画
         ScaleAnimation scaleAnimation = new ScaleAnimation(0, 1, 0, 1,
                 Animation.RELATIVE_TO_SELF, 0.5F,
@@ -295,8 +295,8 @@ public class AppManageActivity extends Activity implements View.OnClickListener 
                     ToastUtil.show(getApplicationContext(),"此应用不能卸载");
                 }else {
                     Intent intent = new Intent("android.intent.action.DELETE");
-                    intent.addCategory("android.intent.category,DEFAULT");
-                    intent.setData(Uri.parse("package:"+mAppInfo.packageName));
+                    intent.addCategory("android.intent.category.DEFAULT");
+                    intent.setData(Uri.parse("package:"+mAppInfo.getPackageName()));
                     startActivity(intent);
                 }
                 break;
