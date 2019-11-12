@@ -131,7 +131,7 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
                     holder.tv_app_name = convertView.findViewById(R.id.tv_app_name);
                     holder.tv_memory_info = convertView.findViewById(R.id.tv_memory_info);
                     holder.cb_box = convertView.findViewById(R.id.cb_box);
-                    //holde放置在convertView上
+                    //holder放置在convertView上
                     convertView.setTag(holder);
                 }else {
                     holder = (ViewHolder) convertView.getTag();
@@ -141,7 +141,7 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
                 holder.tv_app_name.setText(getItem(position).name);
                 String strSize = Formatter.formatFileSize(getApplicationContext(),getItem(position).memSize);
                 holder.tv_memory_info.setText(strSize);
-                //本应用不能被选中，讲checkbox隐藏
+                //本应用不能被选中，将checkbox隐藏
                 if (getItem(position).packageName.equals(getPackageName())){
                     holder.cb_box.setVisibility(View.GONE);
                 }else {
@@ -183,8 +183,8 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
             @Override
             public void run() {
                 mProcessInfoList = ProcessInfoProvider.getProcessInfo(getApplicationContext());
-                mSystemList = new ArrayList<ProcessInfo>();
-                mCustomerList = new ArrayList<ProcessInfo>();
+                mSystemList = new ArrayList<>();
+                mCustomerList = new ArrayList<>();
                 //分开系统应用和用户应用
                 for (ProcessInfo info : mProcessInfoList){
                     if(info.isSystem){

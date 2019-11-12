@@ -96,12 +96,12 @@ public class ProcessInfoProvider {
         return 0;
     }
 
-    /**
+    /**Android 5.1.1以上的系统只能获得自己应用的包，所以获取正在运行的进程要用其他办法
     *@param
     *@return 当前手机正在运行的进程信息列表
     */
     public static List<ProcessInfo> getProcessInfo(Context ctx){
-        List<ProcessInfo> processInfoList = new ArrayList<ProcessInfo>();
+        List<ProcessInfo> processInfoList = new ArrayList<>();
         //获取进程相关信息
         ActivityManager am = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
         //获取正在运行的进程的集合
@@ -111,7 +111,7 @@ public class ProcessInfoProvider {
         for (RunningAppProcessInfo info:runningAppProcesses){
             ProcessInfo processInfo = new ProcessInfo();
             processInfo.packageName = info.processName;
-            //数组中索引位置为0的对象，为当i前进程的内存信息的对象
+            //数组中索引位置为0的对象，为当前进程的内存信息的对象
             Debug.MemoryInfo[] processMemoryInfo = am.getProcessMemoryInfo(new int[]{info.pid});
             Debug.MemoryInfo memoryInfo = processMemoryInfo[0];
             //获取已使用内存的大小
