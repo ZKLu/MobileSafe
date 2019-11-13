@@ -40,6 +40,10 @@ public class CommonNumberQueryActivity extends Activity {
         initData();
     }
 
+    private void initUI() {
+        elv_number = findViewById(R.id.elv_number);
+    }
+
     /**给elv准备数据
      *@param
      *@return
@@ -76,9 +80,6 @@ public class CommonNumberQueryActivity extends Activity {
         startActivity(intent);
     }
 
-    private void initUI() {
-        elv_number = findViewById(R.id.elv_number);
-    }
     class MyAdatper extends BaseExpandableListAdapter{
         @Override
         public int getGroupCount() {
@@ -117,7 +118,7 @@ public class CommonNumberQueryActivity extends Activity {
 
         @Override
         public boolean hasStableIds() {
-            //是否将mGroup的id作为数据适配器集合的id
+            //用来判断ExpandableListView内容id是否有效的(返回true or false)，系统会跟据id来确定当前显示哪条内容，也就是firstVisibleChild的位置。
             //已经写死，不用修改
             return false;
         }
