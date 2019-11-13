@@ -1,6 +1,7 @@
 package com.samlu.mobilesafe.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -20,6 +21,8 @@ import android.widget.TextView;
 import com.samlu.mobilesafe.R;
 import com.samlu.mobilesafe.db.domin.ProcessInfo;
 import com.samlu.mobilesafe.engine.ProcessInfoProvider;
+import com.samlu.mobilesafe.utils.ConstantValue;
+import com.samlu.mobilesafe.utils.SpUtil;
 import com.samlu.mobilesafe.utils.ToastUtil;
 
 import java.util.ArrayList;
@@ -79,7 +82,11 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
 
         @Override
         public int getCount() {
-            return mCustomerList.size() +mSystemList.size() +2;
+            if (SpUtil.getBoolean(getApplicationContext(), ConstantValue.SHOW_SYSTEM,false)){
+                return mCustomerList.size() +mSystemList.size() +2;
+            }else {
+                return mCustomerList.size()+1;
+            }
         }
 
         @Override
@@ -293,10 +300,27 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
                 cleanAll();
                 break;
             case R.id.bt_setting:
+                Setting();
                 break;
         }
 
     }
+
+    private void Setting() {
+        Intent intent = new Intent(this,ProcessSettingActivity.class);
+        startActivityForResult(intent,0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //通知数据适配器刷新
+        if (mAdapter != null)
+        {
+            mAdapter.notifyDataSetChanged();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     /**清理选中进程
     *@param
     *@return

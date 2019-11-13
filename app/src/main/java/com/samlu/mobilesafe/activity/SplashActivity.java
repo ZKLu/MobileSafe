@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -252,6 +253,27 @@ public class SplashActivity extends AppCompatActivity {
         initAnimation();
         //初始化数据库
         initDB();
+        //生成快捷方式
+        //避免多次生成快捷方式
+        if (!SpUtil.getBoolean(this,ConstantValue.HAS_SHOTRCUT,false)){
+            initShortCut();
+        }
+    }
+
+    /**生成快捷方式
+    *@param
+    *@return
+    */
+    private void initShortCut() {
+        Intent intent = new Intent("com.android.launcher.action.INSTALL_SHORTCUT");
+        intent.putExtra(Intent.EXTRA_SHORTCUT_ICON,
+                BitmapFactory.decodeResource(getResources(),R.mipmap.ic_launcher));
+        intent.putExtra(Intent.EXTRA_SHORTCUT_NAME,"手机卫士");
+        Intent shortCutIntent = new Intent("android.intent.action.HOME");
+        shortCutIntent.addCategory("android.intent.category.DEFAULT");
+        intent.putExtra(Intent.EXTRA_SHORTCUT_INTENT,shortCutIntent);
+        sendBroadcast(intent);
+        SpUtil.putBoolean(this,ConstantValue.HAS_SHOTRCUT,true);
     }
 
     private void initDB() {

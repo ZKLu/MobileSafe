@@ -151,4 +151,21 @@ public class ProcessInfoProvider {
         //杀死进程，需要权限
         am.killBackgroundProcesses(killProcess.packageName);
     }
+
+    /**杀死所有进程
+    *@param
+    *@return
+    */
+    public static void killAllProcess(Context ctx) {
+        ActivityManager am = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
+        //获取正在运行进程的集合
+        List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = am.getRunningAppProcesses();
+        //循环遍历所有进程(除了手机卫士外)，并且杀死
+        for (RunningAppProcessInfo info: runningAppProcesses){
+            if (info.processName.equals(ctx.getPackageName())){
+                continue;
+            }
+            am.killBackgroundProcesses(info.processName);
+        }
+    }
 }
