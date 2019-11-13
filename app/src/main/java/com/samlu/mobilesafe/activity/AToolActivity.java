@@ -26,6 +26,7 @@ public class AToolActivity extends Activity{
     private TextView tv_query_phone_address;
     private TextView tv_sms_backup;
     private TextView tv_common_number_query;
+    private TextView tv_app_lock;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -37,6 +38,17 @@ public class AToolActivity extends Activity{
         //短信备份方法
         initSmsBackup();
         initCommonNumberQuery();
+        initAppLock();
+    }
+
+    private void initAppLock() {
+        tv_app_lock = findViewById(R.id.tv_app_lock);
+        tv_app_lock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),AppLockActivity.class));
+            }
+        });
     }
 
     private void initCommonNumberQuery() {
