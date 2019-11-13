@@ -279,6 +279,7 @@ public class SplashActivity extends AppCompatActivity {
     private void initDB() {
         //归属地属地库拷贝过程
         initAddressDB("address.db");
+        initAddressDB("commonnum.db");
     }
 
     /**

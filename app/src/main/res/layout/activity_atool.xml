@@ -32,5 +32,15 @@
         android:layout_height="wrap_content"
         android:id="@+id/pb_bar"
         style="@android:style/Widget.ProgressBar.Horizontal"/>
-
+    <TextView
+        android:id="@+id/tv_common_number_query"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="常用号码查询"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:drawableLeft="@android:drawable/btn_star"
+        android:background="@drawable/selector_atool_item_bg"
+        />
 </LinearLayout>

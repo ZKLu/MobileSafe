@@ -25,6 +25,7 @@ public class AToolActivity extends Activity{
     private static final String TAG = "AToolActivity";
     private TextView tv_query_phone_address;
     private TextView tv_sms_backup;
+    private TextView tv_common_number_query;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,17 @@ public class AToolActivity extends Activity{
         initPhoneAddress();
         //短信备份方法
         initSmsBackup();
+        initCommonNumberQuery();
+    }
+
+    private void initCommonNumberQuery() {
+        tv_common_number_query = findViewById(R.id.tv_common_number_query);
+        tv_common_number_query.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(),CommonNumberQueryActivity.class));
+            }
+        });
     }
 
     private void initSmsBackup() {
