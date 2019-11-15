@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 
 import com.samlu.mobilesafe.db.AppLockOpenHelper;
 import com.samlu.mobilesafe.db.BlackNumberOpenHelper;
@@ -19,13 +20,16 @@ import java.util.List;
 public class AppLockDao {
 
     private final AppLockOpenHelper appLockOpenHelper;
+    private final Context context;
 
 
     //BlackNumberDao单例模式
     //1、私有化构造方法
     private AppLockDao(Context context){
+        this.context = context;
         //创建数据库以及表
         appLockOpenHelper = new AppLockOpenHelper(context);
+
     }
     //2、声明一个私有的静态当前类对象
     private static AppLockDao appLockDao =null;
@@ -42,12 +46,14 @@ public class AppLockDao {
         ContentValues contentValues = new ContentValues();
         contentValues.put("package",packageName);
         db.insert("applock",null,contentValues);
+        context.getContentResolver().notifyChange(Uri.parse("content://applock/change"),null);
         db.close();
     }
     public void delete(String packageName){
         SQLiteDatabase db =appLockOpenHelper.getWritableDatabase();
         db.delete("applock","package =?",new String[]{packageName});
         db.close();
+        context.getContentResolver().notifyChange(Uri.parse("content://applock/change"),null);
     }
 
     public List<String> findAll(){

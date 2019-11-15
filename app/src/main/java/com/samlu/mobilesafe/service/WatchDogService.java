@@ -6,6 +6,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
+import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
@@ -24,6 +27,7 @@ public class WatchDogService extends Service{
     private List<String> mPackagenameList;
     private InnerReceiver mReceiver;
     private String mSkipPackageName;
+    private MyContentObserver mContentObserver;
 
     @Override
     public void onCreate() {
@@ -31,10 +35,17 @@ public class WatchDogService extends Service{
         //看门狗的死循环，让其时刻检测现在开启的应用，是否为程序中要去拦截的应用
         isWatch = true;
         watch();
+
+        //注册广播接收器，解锁完成发送广播，不在监测这个应用
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.intent.action.SKIP");
         mReceiver = new InnerReceiver();
         registerReceiver(mReceiver,filter);
+
+        //注册内容观察者，观察数据库变化，若数据库有插入或删除，则需要让集合重新获取一次数据
+        mContentObserver = new MyContentObserver(new Handler());
+        getContentResolver().registerContentObserver(Uri.parse("content://applock/change"),
+                true,mContentObserver);
         super.onCreate();
     }
 
@@ -63,7 +74,7 @@ public class WatchDogService extends Service{
                             intent.putExtra("packagename",packageName);
                             startActivity(intent);
                         }
-                        }
+                    }
                     //睡眠一下,避免子线程长期占用CPU
                     try {
                         Thread.sleep(200);
@@ -75,23 +86,51 @@ public class WatchDogService extends Service{
         }.start();
     }
 
-    class InnerReceiver extends BroadcastReceiver{
+        class InnerReceiver extends BroadcastReceiver{
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                //获取广播传递的包名，略过此包名的监测
+                mSkipPackageName = intent.getStringExtra("packagename");
+            }
+        }
 
         @Override
-        public void onReceive(Context context, Intent intent) {
-            //获取广播传递的包名，略过此包名的监测
-            mSkipPackageName = intent.getStringExtra("packagename");
+        public void onDestroy() {
+            super.onDestroy();
         }
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
+        @Nullable
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
+        }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
+
+    class MyContentObserver extends ContentObserver{
+
+        /**
+         * Creates a content observer.
+         *
+         * @param handler The handler to run {@link #onChange} on, or null if none.
+         */
+        public MyContentObserver(Handler handler) {
+            super(handler);
+        }
+
+        /**数据库发生改变调用的方法，重新获取包名所在集合的数据
+        *@param
+        *@return
+        */
+        @Override
+        public void onChange(boolean selfChange) {
+            new Thread(){
+                @Override
+                public void run() {
+                    mPackagenameList = mDao.findAll();
+                }
+            }.start();
+            super.onChange(selfChange);
+        }
     }
 }
