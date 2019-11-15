@@ -12,6 +12,7 @@ import android.view.View;
 import com.samlu.mobilesafe.R;
 import com.samlu.mobilesafe.service.AddressService;
 import com.samlu.mobilesafe.service.BlackNumberService;
+import com.samlu.mobilesafe.service.WatchDogService;
 import com.samlu.mobilesafe.utils.ConstantValue;
 import com.samlu.mobilesafe.utils.ServiceUtil;
 import com.samlu.mobilesafe.utils.SpUtil;
@@ -39,6 +40,29 @@ public class SettingActivity extends Activity{
         initToastStyle();
         initLocation();
         initBlackNumber();
+        initAppLock();
+    }
+
+    /**初始化程序锁
+    *@param
+    *@return
+    */
+    private void initAppLock() {
+        final SettingItemView siv_app_lock = findViewById(R.id.siv_app_lock);
+        boolean isRunning = ServiceUtil.isRunning(this,"com.samlu.mobilesafe.service.WatchDogService");
+        siv_app_lock.setCheck(isRunning);
+        siv_app_lock.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isCheck = siv_app_lock.isCheck();
+                siv_app_lock.setCheck(!isCheck);
+                if (!isCheck){
+                    startService(new Intent(getApplicationContext(),WatchDogService.class));
+                }else {
+                    stopService(new Intent(getApplicationContext(),WatchDogService.class));
+                }
+            }
+        });
     }
 
     /**拦截黑名单短信和电话
