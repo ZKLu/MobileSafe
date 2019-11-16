@@ -75,6 +75,7 @@ public class HomeActivity extends Activity{
                         break;
                     case 5:
                         startActivity(new Intent(getApplicationContext(),AntiVirusActivity.class));
+                        break;
                     case 7:
                         startActivity(new Intent(getApplicationContext(),AToolActivity.class));
                         break;

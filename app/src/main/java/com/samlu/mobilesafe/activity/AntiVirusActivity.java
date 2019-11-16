@@ -1,9 +1,13 @@
 package com.samlu.mobilesafe.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,12 +37,48 @@ public class AntiVirusActivity extends Activity{
     private LinearLayout ll_add_text;
     private int index = 0;
     private static final int SCANNING =100;
+    private static final int SCANNING_FINISH = 101;
+    private List<ScanInfo> mVirusScanInfoList;
     private Handler mhandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-
+            switch (msg.what){
+                case SCANNING:
+                    //显示正在扫描的应用
+                    ScanInfo info = (ScanInfo)msg.obj;
+                    tv_name.setText(info.name);
+                    //在线性布局中添加一个扫描应用的TextView
+                    TextView textView = new TextView(getApplicationContext());
+                    if (info.isVirus){
+                        textView.setTextColor(Color.RED);
+                        textView.setText("发现病毒："+info.name);
+                    }else{
+                        textView.setTextColor(Color.BLACK);
+                        textView.setText("扫描安全："+info.name);
+                    }
+                    ll_add_text.addView(textView,0);
+                    break;
+                case SCANNING_FINISH:
+                    tv_name.setText("扫描完成");
+                    //停止控件上的动画
+                    iv_scanning.clearAnimation();
+                    //告知用户卸载带病毒的应用
+                    uninstallVirus();
+                    break;
+            }
         }
     };
+
+
+    private void uninstallVirus() {
+        for (ScanInfo info : mVirusScanInfoList){
+            String packageName = info.packageName;
+            Intent intent = new Intent("android.intent.action.DELETE");
+            intent.addCategory("android.intent.category.DEFAULT");
+            intent.setData(Uri.parse("package:"+packageName));
+            startActivity(intent);
+        }
+    }
 
 
     @Override
@@ -65,9 +105,10 @@ public class AntiVirusActivity extends Activity{
                 Animation.RELATIVE_TO_SELF, 0.5f);
         rotateAnimation.setDuration(1000);
         //指定动画一直旋转
-        rotateAnimation.setRepeatMode(RotateAnimation.INFINITE);
+        rotateAnimation.setRepeatCount(RotateAnimation.INFINITE);
         //保持动画执行结束后的状态
         rotateAnimation.setFillAfter(true);
+        iv_scanning.startAnimation(rotateAnimation);
     }
 
     private void checkVirus() {
@@ -83,7 +124,7 @@ public class AntiVirusActivity extends Activity{
                 List<PackageInfo> packageInfoList = pm.getInstalledPackages(
                         PackageManager.GET_SIGNATURES + PackageManager.GET_UNINSTALLED_PACKAGES);
                 //记录带病毒应用的集合
-                List<ScanInfo> VirusScanInfoList = new ArrayList<>();
+                mVirusScanInfoList = new ArrayList<>();
                 //记录所有应用的结合
                 List<ScanInfo> scanInfoList = new ArrayList<>();
                 pb_bar.setMax(packageInfoList.size());
@@ -98,7 +139,7 @@ public class AntiVirusActivity extends Activity{
                     if (virusList.contains(encoder)){
                         //记录病毒
                         scanInfo.isVirus = true;
-                        VirusScanInfoList.add(scanInfo);
+                        mVirusScanInfoList.add(scanInfo);
                     }else {
                         scanInfo.isVirus = false;
                     }
@@ -119,6 +160,9 @@ public class AntiVirusActivity extends Activity{
                     msg.obj = scanInfo;
                     mhandler.sendMessage(msg);
                 }
+                Message msg = Message.obtain();
+                msg.what = SCANNING_FINISH;
+                mhandler.sendMessage(msg);
             }
         }.start();
     }
