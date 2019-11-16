@@ -150,6 +150,7 @@ public class AntiVirusActivity extends Activity{
                     pb_bar.setProgress(index);
 
                     try {
+                        //产生一个0~99的随机正整数
                         Thread.sleep(50 + new Random().nextInt(100));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
