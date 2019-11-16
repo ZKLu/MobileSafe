@@ -26,7 +26,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.EnterPwdActivity" android:launchMode="singleInstance"/>
+        <!--android:excludeFromRecents在后台任务中是否显示手机卫士的图标，true不显示，false显示-->
+        <activity android:name=".activity.EnterPwdActivity" android:launchMode="singleInstance"
+            android:excludeFromRecents="true"/>
         <activity android:name=".activity.CommonNumberQueryActivity"/>
         <activity android:name="com.samlu.mobilesafe.activity.SettingActivity"/>
         <activity android:name="com.samlu.mobilesafe.activity.SetupOverActivity"/>

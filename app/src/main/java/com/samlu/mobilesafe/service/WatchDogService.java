@@ -108,16 +108,9 @@ public class WatchDogService extends Service{
 
 
     class MyContentObserver extends ContentObserver{
-
-        /**
-         * Creates a content observer.
-         *
-         * @param handler The handler to run {@link #onChange} on, or null if none.
-         */
         public MyContentObserver(Handler handler) {
             super(handler);
         }
-
         /**数据库发生改变调用的方法，重新获取包名所在集合的数据
         *@param
         *@return

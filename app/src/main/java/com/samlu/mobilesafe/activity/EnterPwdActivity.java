@@ -76,4 +76,14 @@ public class EnterPwdActivity extends Activity{
         et_pwd = findViewById(R.id.et_pwd);
         bt_submit = findViewById(R.id.bt_submit);
     }
+
+    @Override
+    public void onBackPressed() {
+        //点击回退按钮的处理方法
+        //通过隐式意图跳转到桌面
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        startActivity(intent);
+        super.onBackPressed();
+    }
 }
