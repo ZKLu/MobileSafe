@@ -97,6 +97,14 @@ public class WatchDogService extends Service{
 
         @Override
         public void onDestroy() {
+            //停止服务后要做的处理
+            isWatch = false;
+            if (mReceiver !=null){
+                unregisterReceiver(mReceiver);
+            }
+            if (mContentObserver !=null){
+                getContentResolver().unregisterContentObserver(mContentObserver);
+            }
             super.onDestroy();
         }
 
