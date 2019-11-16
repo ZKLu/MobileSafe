@@ -280,6 +280,7 @@ public class SplashActivity extends AppCompatActivity {
         //归属地属地库拷贝过程
         initAddressDB("address.db");
         initAddressDB("commonnum.db");
+        initAddressDB("antivirus.db");
     }
 
     /**
