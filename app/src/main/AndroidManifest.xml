@@ -26,6 +26,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.CacheClearActivity"/>
         <activity android:name=".activity.AntiVirusActivity"/>
         <!--android:excludeFromRecents在后台任务中是否显示手机卫士的图标，true不显示，false显示-->
         <activity android:name=".activity.EnterPwdActivity" android:launchMode="singleInstance"
@@ -73,6 +74,7 @@
         <service android:name=".service.AddressService"/>
         <service android:name=".service.LockScreenService"/>
     </application>
+    <uses-permission android:name="android.permission.GET_PACKAGE_SIZE"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT"/>
     <!--杀死后台进程-->
