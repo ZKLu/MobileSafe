@@ -1,11 +1,14 @@
 package com.samlu.mobilesafe.activity;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.IPackageDataObserver;
 import android.content.pm.IPackageStatsObserver;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageStats;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -32,6 +35,7 @@ public class CacheClearActivity extends Activity{
     private static final int UPDATE_CACHE_APP = 100;
     private static final int CHECK_CACHE_APP = 101;
     private static final int CHECK_FINISH = 102;
+    private static final int CLEAR_CACHE = 103;
     private Button bt_clean;
     private ProgressBar pb_bar;
     private TextView tv_name;
@@ -48,17 +52,45 @@ public class CacheClearActivity extends Activity{
                     TextView tv_app_name = view.findViewById(R.id.tv_app_name);
                     TextView tv_memory_info = view.findViewById(R.id.tv_memory_info);
                     ImageView iv_delete = view.findViewById(R.id.iv_delete);
-                    CacheInfo info = (CacheInfo) msg.obj;
+                    final CacheInfo info = (CacheInfo) msg.obj;
                     iv_icon.setBackgroundDrawable(info.icon);
-                    tv_name.setText(info.name);
+                    tv_app_name.setText(info.name);
                     tv_memory_info.setText(Formatter.formatFileSize(getApplicationContext(),info.cacheSize));
                     ll_add_text.addView(view,0);
+                    iv_delete.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            //清除单个选中应用的缓冲
+                            //使用以下方法需要使用权限android.permission.DELETE_CACHE_FILES，此权限需要系统级应用才可以使用
+                            /*Class<?> clazz = null;
+                            try {
+                                clazz = Class.forName("android.content.pm.PackageManager");
+                                Method method = clazz.getMethod("deleteApplicationCacheFiles", String.class, IPackageDataObserver.class);
+                                method.invoke(mPM,info.packageName,new IPackageDataObserver.Stub(){
+
+                                    @Override
+                                    public void onRemoveCompleted(String packageName, boolean succeeded) throws RemoteException {
+                                        //删除此应用缓存后调用的方法
+                                    }
+                                });
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }*/
+                            //通过查看系统日志，获取开启清理缓存activity的action和data
+                            Intent intent = new Intent("android.setting.APPLICATION_DEFAULT_SETTING");
+                            intent.setData(Uri.parse("package:"+info.packageName));
+                            startActivity(intent);
+                        }
+                    });
                     break;
                 case CHECK_CACHE_APP:
                     tv_name.setText("正在扫描："+msg.obj.toString());
                     break;
                 case CHECK_FINISH:
                     tv_name.setText("扫描结束");
+                    break;
+                case CLEAR_CACHE:
+                    ll_add_text.removeAllViews();
                     break;
             }
         }
@@ -166,11 +198,20 @@ public class CacheClearActivity extends Activity{
         bt_clean.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Class<?> clazz = null;
+                Class<?> clazz ;
                 try {
                     clazz = Class.forName("android.content.pm.PackageManager");
                     Method method = clazz.getMethod("freeStorageAndNotify", long.class, IPackageDataObserver.class);
-                    method.invoke(mPM,Long.MAX_VALUE,mStatsObserver);
+                    method.invoke(mPM,Long.MAX_VALUE,new IPackageDataObserver.Stub(){
+
+                        @Override
+                        public void onRemoveCompleted(String packageName, boolean succeeded) throws RemoteException {
+                            //清除缓存后调用的方法
+                            Message msg = Message.obtain();
+                            msg.what = CLEAR_CACHE;
+                            mhandler.sendMessage(msg);
+                        }
+                    });
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
