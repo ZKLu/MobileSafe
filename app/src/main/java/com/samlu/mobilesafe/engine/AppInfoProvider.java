@@ -29,7 +29,8 @@ public class AppInfoProvider {
             AppInfo appInfo = new AppInfo();
             appInfo.packageName = packageInfo.packageName;
             ApplicationInfo applicationInfo = packageInfo.applicationInfo;
-            appInfo.name = applicationInfo.loadLabel(manager).toString();
+            //applicationInfo.uid 每个应用在手机里的唯一性标识
+            appInfo.name = applicationInfo.loadLabel(manager).toString()+applicationInfo.uid;
             appInfo.icon = applicationInfo.loadIcon(manager);
             //判断是否系统应用
             if ((applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == ApplicationInfo.FLAG_SYSTEM){

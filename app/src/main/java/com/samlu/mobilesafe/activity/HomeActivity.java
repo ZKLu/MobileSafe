@@ -73,6 +73,9 @@ public class HomeActivity extends Activity{
                     case 3:
                         startActivity(new Intent(getApplicationContext(),ProcessManageActivity.class));
                         break;
+                    case 4:
+                        startActivity(new Intent(getApplicationContext(),TrafficActivity.class));
+                        break;
                     case 5:
                         startActivity(new Intent(getApplicationContext(),AntiVirusActivity.class));
                         break;
