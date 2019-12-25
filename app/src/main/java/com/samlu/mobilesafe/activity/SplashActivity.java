@@ -140,7 +140,7 @@ public class SplashActivity extends AppCompatActivity {
         builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialog) {
-                //即使用户店家取消，也让用户进入主界面
+                //即使用户点击取消，也让用户进入主界面
                 enterHome();
                 dialog.dismiss();
             }
@@ -151,7 +151,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void downloadApk() {
 
         //判断sd卡是否可用
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED));{
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
         //2获取sd卡的路径
         String path = Environment.getExternalStorageDirectory().getAbsolutePath()
                 + File.separator;
@@ -192,8 +192,6 @@ public class SplashActivity extends AppCompatActivity {
             public void onStarted() {
 
             }
-
-
             @Override
             /**
              *@param:total 下载apk大小 current 已经下载的大小 isDownloading 是否正在下载
@@ -229,7 +227,7 @@ public class SplashActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this,HomeActivity.class);
         startActivity(intent);
-        //开启新的页面后，将splahactivity关闭，因为导航界面只可见一次
+        //开启新的页面后，将splashActivity关闭，因为导航界面只可见一次
         finish();
     }
 
