@@ -82,7 +82,7 @@ public class UpdateWidgetService extends Service{
         //获取小工具布局转换成的view对象
         RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.example_appwidget);
         //给view对象里的控件赋值
-        remoteViews.setTextViewText(R.id.tv_process_count,"进程总数："+ ProcessInfoProvider.getProcssCount(this));
+        remoteViews.setTextViewText(R.id.tv_process_count,"进程总数："+ ProcessInfoProvider.getProcessCount(this));
         String strAvaiSpace = Formatter.formatFileSize(this, ProcessInfoProvider.getAvailableSpace(this));
         remoteViews.setTextViewText(R.id.tv_process_memory,"可用内存："+strAvaiSpace);
 

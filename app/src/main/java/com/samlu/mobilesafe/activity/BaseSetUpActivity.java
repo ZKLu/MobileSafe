@@ -27,7 +27,7 @@ public abstract class BaseSetupActivity extends Activity{
                                    float velocityX, float velocityY) {
                 //监听手势的移动
                 if ((e1.getX()-e2.getX())>0){
-                    //又右向左，移动到下一页
+                    //由右向左，移动到下一页
                     //调用子类的下一页方法，抽象方法
                     //在第一个界面上使用，跳转到第二个页面
                     //在第二个界面上使用，跳转到第三个页面

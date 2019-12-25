@@ -40,28 +40,28 @@ public class AppLockActivity extends Activity{
     private List<AppInfo> mAppInfoList;
     private List<AppInfo> mLockList,mUnlockList;
     private AppLockDao mDao;
-    private MyAdatper mUnLockAdatper,mLockAdatper;
+    private MyAdapter mUnLockAdatper,mLockAdatper;
     private Handler mHandler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             //接收到信息，填充已加锁和未加锁的数据适配器
-            mLockAdatper = new MyAdatper(true);
+            mLockAdatper = new MyAdapter(true);
             lv_lock.setAdapter(mLockAdatper);
 
-            mUnLockAdatper = new MyAdatper(false);
+            mUnLockAdatper = new MyAdapter(false);
             lv_lock.setAdapter(mUnLockAdatper);
         }
     };
     private TranslateAnimation mTranslateAnimation;
 
-    class MyAdatper extends BaseAdapter{
+    class MyAdapter extends BaseAdapter{
         private final boolean isLock;
 
         /**
         *@param isLock 用于区分已加锁和未加锁应用的标识
         *@return
         */
-        public MyAdatper(boolean isLock){
+        public MyAdapter(boolean isLock){
             this.isLock = isLock;
         }
 
@@ -155,8 +155,8 @@ public class AppLockActivity extends Activity{
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_app_lock);
         initUI();
         initData();

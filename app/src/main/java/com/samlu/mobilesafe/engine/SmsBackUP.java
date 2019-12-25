@@ -34,7 +34,7 @@ public class SmsBackUP {
             cursor = ctx.getContentResolver().query(Uri.parse("content://sms/"),
                     new String[]{"address","date","type","body"},null,null,null);
             fos = new FileOutputStream(file);
-            //序列化数据库中读取的数据，防止到xml中
+            //序列化数据库中读取的数据，放置到xml中
             XmlSerializer newSerializer = Xml.newSerializer();
             //为xml做初始设置
             newSerializer.setOutput(fos,"utf-8");

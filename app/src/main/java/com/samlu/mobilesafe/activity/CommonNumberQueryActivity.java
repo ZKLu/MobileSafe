@@ -7,9 +7,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.PersistableBundle;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +29,7 @@ public class CommonNumberQueryActivity extends Activity {
 
     private ExpandableListView elv_number;
     private List<CommonNumberDao.Group> mGroup;
-    private MyAdatper myAdatper;
+    private MyAdapter myAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,13 +50,13 @@ public class CommonNumberQueryActivity extends Activity {
     private void initData() {
         CommonNumberDao dao = new CommonNumberDao();
         mGroup = dao.getGroup();
-        myAdatper = new MyAdatper();
-        elv_number.setAdapter(myAdatper);
+        myAdapter = new MyAdapter();
+        elv_number.setAdapter(myAdapter);
         //给elv注册点击事件
         elv_number.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                startCall(myAdatper.getChild(groupPosition, childPosition).number);
+                startCall(myAdapter.getChild(groupPosition, childPosition).number);
                 return false;
             }
         });
@@ -80,7 +79,7 @@ public class CommonNumberQueryActivity extends Activity {
         startActivity(intent);
     }
 
-    class MyAdatper extends BaseExpandableListAdapter{
+    class MyAdapter extends BaseExpandableListAdapter{
         @Override
         public int getGroupCount() {
             //获取组的总数
@@ -118,7 +117,8 @@ public class CommonNumberQueryActivity extends Activity {
 
         @Override
         public boolean hasStableIds() {
-            //用来判断ExpandableListView内容id是否有效的(返回true or false)，系统会跟据id来确定当前显示哪条内容，也就是firstVisibleChild的位置。
+            //用来判断ExpandableListView内容id是否有效的(返回true or false)
+            // 系统会跟据id来确定当前显示哪条内容，也就是firstVisibleChild的位置。
             //已经写死，不用修改
             return false;
         }

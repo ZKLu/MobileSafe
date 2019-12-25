@@ -27,7 +27,7 @@ public class ProcessInfoProvider {
     private FileReader fileReader;
 
     //获取进程总数
-    public static int getProcssCount(Context ctx){
+    public static int getProcessCount(Context ctx){
         ActivityManager am = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
         //获取正在运行进程的集合
         List<ActivityManager.RunningAppProcessInfo> runningAppProcesses = am.getRunningAppProcesses();

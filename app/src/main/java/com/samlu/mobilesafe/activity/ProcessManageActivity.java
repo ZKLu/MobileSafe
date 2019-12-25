@@ -212,18 +212,18 @@ public class ProcessManageActivity extends Activity implements View.OnClickListe
 
     private void initTitleData() {
         Log.i("ProcessManageActivity","进入initTitleData");
-        mProcessCount = ProcessInfoProvider.getProcssCount(this);
+        mProcessCount = ProcessInfoProvider.getProcessCount(this);
         tv_process_count.setText("进程总数："+mProcessCount);
 
         //获取可用内存大小，并且格式化
         mAvailableSpace = ProcessInfoProvider.getAvailableSpace(this);
-        String strAvailebleSpace = Formatter.formatFileSize(this, mAvailableSpace);
+        String strAvailableSpace = Formatter.formatFileSize(this, mAvailableSpace);
 
         //获取总内存大小，并且格式化(文件大小转换，第二个参数不断处除1024，直到小于900)
         long totalleSpace = ProcessInfoProvider.getTotalleSpace(this);
         mStrTotalSpace = Formatter.formatFileSize(this, totalleSpace);
 
-        tv_memory_info.setText("剩余/总共："+strAvailebleSpace+"/"+strAvailebleSpace);
+        tv_memory_info.setText("剩余/总共："+strAvailableSpace+"/"+strAvailableSpace);
     }
 
     private void initUI() {
